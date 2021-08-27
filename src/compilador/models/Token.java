@@ -1,19 +1,19 @@
 package compilador.models;
 
 public class Token {
-    private char Lexema;
+    private String Lexema;
     private String Simbol;
 
-    public Token(char lexema, String simbol) {
+    public Token(String lexema, String simbol) {
         Lexema = lexema;
         Simbol = simbol;
     }
 
-    public char getLexema() {
+    public String getLexema() {
         return Lexema;
     }
 
-    public void setLexema(char lexema) {
+    public void setLexema(String lexema) {
         Lexema = lexema;
     }
 
