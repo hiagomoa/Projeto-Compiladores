@@ -18,14 +18,15 @@ public class LexicalAnalizer {
         int length = data.length;
         for (i = 0; i < length; i++) {
             char currentChar = (char) data[i];
-            while (((currentChar == '{') || Character.isWhitespace(currentChar)) && (i < length - 1)) {//Faça {Enquanto ((caractere = “{“) ou (caractere = espaço)) e (não acabou o arquivo fonte)
+            while ((i < length - 1) && ((currentChar == '{') || Character.isSpace(currentChar))) {//Faça {Enquanto ((caractere = “{“) ou (caractere = espaço)) e (não acabou o arquivo fonte)
                 if (currentChar == '{') {// Se caractere = “{“
                     while ((currentChar != '}') && (i < length - 1)) {//Enquanto (caractere != “}” ) e(não acabou o arquivo fonte)
                         currentChar = (char) data[++i];
                     }
-                    currentChar = (char) data[++i];
+                    i++;
+                    //currentChar = (char) data[i];
                 }
-                while (Character.isWhitespace(currentChar) && (i < length - 1)) {
+                while ((i < length - 1) && Character.isSpace((char) data[i])) {
                     currentChar = (char) data[++i];
                 }
             }
@@ -38,9 +39,6 @@ public class LexicalAnalizer {
             System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
         }
 
-//        for(int j=0;j<listToken.toArray().length;j++){
-//            System.out.println(listToken.indexOf(j));
-//        }
     }
 
     private void getToken() throws Exception {
@@ -125,7 +123,7 @@ public class LexicalAnalizer {
         }
     }
 
-    private void managerRelationalOperator() {
+    private void managerRelationalOperator() throws Exception {
         String relationalOperator = new String();
         relationalOperator += (char) data[i];
         if ((char) data[i] == '!') {
@@ -135,8 +133,9 @@ public class LexicalAnalizer {
                 listToken.add(new Token(relationalOperator, "sdif"));
                 return;
             }
-            //todo:ERROr
-            return;
+            throw new Exception("Error: is not a !=");
+
+//            return;
         }
         if ((char) data[i] == '<') {
             i++;
