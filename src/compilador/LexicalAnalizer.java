@@ -16,12 +16,17 @@ public class LexicalAnalizer {
     public void analizer() throws Exception {
 //        LinkedList<Token> listToken = new LinkedList<Token>();
         int length = data.length;
+        Boolean flagChave = false;
         for (i = 0; i < length; i++) {
             char currentChar = (char) data[i];
             while ((i < length - 1) && ((currentChar == '{') || Character.isSpace(currentChar))) {//Faça {Enquanto ((caractere = “{“) ou (caractere = espaço)) e (não acabou o arquivo fonte)
                 if (currentChar == '{') {// Se caractere = “{“
+
                     while ((currentChar != '}') && (i < length - 1)) {//Enquanto (caractere != “}” ) e(não acabou o arquivo fonte)
                         currentChar = (char) data[++i];
+                    }
+                    if((i == length - 1) && (currentChar!='}')){
+                        throw new Exception("Error: not found } ");
                     }
                     i++;
                     //currentChar = (char) data[i];
@@ -31,14 +36,12 @@ public class LexicalAnalizer {
                 }
             }
             if (currentChar != (char) data[length - 1]) {
-                System.out.println(currentChar);
                 getToken();
             }
         }
         for (Token token : listToken) {
             System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
         }
-
     }
 
     private void getToken() throws Exception {
@@ -66,7 +69,7 @@ public class LexicalAnalizer {
             managerPontuation();
             return;
         }
-        throw new Exception("Error in Get Token");
+        throw new Exception("Error: not expected: "+(char)data[i]);
     }
 
     private void managerDigit() {
