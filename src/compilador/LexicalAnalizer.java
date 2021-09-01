@@ -14,28 +14,21 @@ public class LexicalAnalizer {
     }
 
     public void analizer() throws Exception {
-//        LinkedList<Token> listToken = new LinkedList<Token>();
         int length = data.length;
-        Boolean flagChave = false;
         for (i = 0; i < length; i++) {
-            char currentChar = (char) data[i];
-            while ((i < length - 1) && ((currentChar == '{') || Character.isSpace(currentChar))) {//Faça {Enquanto ((caractere = “{“) ou (caractere = espaço)) e (não acabou o arquivo fonte)
-                if (currentChar == '{') {// Se caractere = “{“
+            while ((i < length - 1) && (((char) data[i] == '{') || Character.isSpace((char) data[i]))) {//Faça {Enquanto ((caractere = “{“) ou (caractere = espaço)) e (não acabou o arquivo fonte)
+                if ((char) data[i] == '{') {// Se caractere = “{“
 
-                    while ((currentChar != '}') && (i < length - 1)) {//Enquanto (caractere != “}” ) e(não acabou o arquivo fonte)
-                        currentChar = (char) data[++i];
-                    }
-                    if((i == length - 1) && (currentChar!='}')){
-                        throw new Exception("Error: not found } ");
+                    while (((char) data[i] != '}') && (i < length - 1)) {//Enquanto (caractere != “}” ) e(não acabou o arquivo fonte)
+                        i++;
                     }
                     i++;
-                    //currentChar = (char) data[i];
                 }
-                while ((i < length - 1) && Character.isSpace((char) data[i])) {
-                    currentChar = (char) data[++i];
+                while ((i < length ) && Character.isSpace((char) data[i])) {
+                    i++;
                 }
             }
-            if (currentChar != (char) data[length - 1]) {
+            if (i < length) {
                 getToken();
             }
         }
