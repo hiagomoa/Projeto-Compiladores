@@ -4,7 +4,7 @@ programa teste;
 var x,y,total: inteiro;
 
 funcao soma:inteiro;
-inicio
+ini$cio
   soma:= x+y;
 fim;
 

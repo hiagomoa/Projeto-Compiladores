@@ -8,26 +8,35 @@ public class LexicalAnalizer {
     public int i = 0;
     public byte[] data;
     public LinkedList<Token> listToken = new LinkedList<Token>();
-
+    int line = 0;
+    int col = 0;
     public LexicalAnalizer(byte[] data) {
         this.data = data;
     }
 
-    public void analizer() throws Exception {
+    public LinkedList<Token> lexical() throws Exception {
         int length = data.length;
-        for (i = 0; i < length; i++) {
-            while ((i < length - 1) && (((char) data[i] == '{') || Character.isSpace((char) data[i]))) {//Faça {Enquanto ((caractere = “{“) ou (caractere = espaço)) e (não acabou o arquivo fonte)
-                if ((char) data[i] == '{') {// Se caractere = “{“
 
-                    while (((char) data[i] != '}') && (i < length - 1)) {//Enquanto (caractere != “}” ) e(não acabou o arquivo fonte)
+        for (i = 0; i < length; i++) {
+            while ((i < length - 1) && (((char) data[i] == '{') || Character.isSpace((char) data[i]))) {
+                if ((char) data[i] == '{') {
+                    while (((char) data[i] != '}') && (i < length - 1)) {
+                        if (i == length - 1) {
+                            throw new Exception("[Error] -- not found \"}\"");
+                        }
                         i++;
                     }
                     i++;
                 }
                 while ((i < length ) && Character.isSpace((char) data[i])) {
+                    if((char) data[i]=='\n'){
+                        line++;
+                        col=i;
+                    }
                     i++;
                 }
             }
+
             if (i < length) {
                 getToken();
             }
@@ -35,6 +44,7 @@ public class LexicalAnalizer {
         for (Token token : listToken) {
             System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
         }
+        return listToken;
     }
 
     private void getToken() throws Exception {
@@ -62,7 +72,7 @@ public class LexicalAnalizer {
             managerPontuation();
             return;
         }
-        throw new Exception("Error: not expected: "+(char)data[i]);
+        throw new Exception("[Error] -- "+(line+1)+":"+(i-col)+"||=> "+ (char)data[i] + " é inválido!");
     }
 
     private void managerDigit() {
@@ -129,9 +139,8 @@ public class LexicalAnalizer {
                 listToken.add(new Token(relationalOperator, "sdif"));
                 return;
             }
-            throw new Exception("Error: is not a !=");
+            throw new Exception("[Error] -- "+(line+1)+":"+(i-col)+"||=> "+ (char)data[i] + " is not a !=");
 
-//            return;
         }
         if ((char) data[i] == '<') {
             i++;
