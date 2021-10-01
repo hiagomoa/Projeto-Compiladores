@@ -15,11 +15,8 @@ public class SyntaticAnalyzer {
         this.listToken = new LexicalAnalizer(data).lexical();
     }
 
-
     public void Syntatic() throws Exception {
         label = 0;
-
-
         for (i = 0; i < listToken.size(); i++) {
             if (listToken.get(i).getSimbol().equals("programa")) {
                 i++;//LEXICO(TOKEN)
@@ -29,23 +26,22 @@ public class SyntaticAnalyzer {
                         BlockAnalyzer();
                         if (listToken.get(i).getSimbol().equals("sponto")) {
                             if (listToken.size() != i) {//TODO: como é comentário?
-                                //ERROR
+                                throw new Exception("[Error] ");
                             }
                         } else {
-                            //ERROR
+                            throw new Exception("[Error] -- esperado um .");
                         }
                     } else {
-                        //ERROR
+                        throw new Exception("[Error] -- esperado um ;");
                     }
                 } else {
-                    //ERROR
-                    //ERROR
+                    throw new Exception("[Error] -- esperado um identificador");
                 }
             }
         }
     }
 
-    private void BlockAnalyzer () {
+    private void BlockAnalyzer ()throws Exception{
         i++;
         AnalyzeVariablesDeclaration();
         AnalyzeSubRoutine();
@@ -53,7 +49,7 @@ public class SyntaticAnalyzer {
 
     }
 
-    private void AnalyzeCommands(){
+    private void AnalyzeCommands()throws Exception{
         if(listToken.get(i).getSimbol().equals("sinicio")){
             i++;
             SimpleCommandAnalyser();
@@ -64,16 +60,16 @@ public class SyntaticAnalyzer {
                         SimpleCommandAnalyser();
                     }
                 }else{
-                    //ERROR
+                    throw new Exception("[Error] -- esperado um ;");
                 }
                 i++;
             }
         }else{
-            //ERROR
+            throw new Exception("[Error] -- esperado um identificador de inicio");
         }
     }
 
-    private void SimpleCommandAnalyser(){
+    private void SimpleCommandAnalyser()throws Exception{
         if(listToken.get(i).getSimbol().equals("sidentificador")){
             ChProcedureAtributeAnalyzer();
         }else if(listToken.get(i).getSimbol().equals("sse")){
@@ -92,7 +88,7 @@ public class SyntaticAnalyzer {
         }
     }
 
-    private void AnalyzeVariablesDeclaration () {//Analisa_et_variáveis
+    private void AnalyzeVariablesDeclaration () throws Exception{//Analisa_et_variáveis
             if (listToken.get(i).getSimbol().equals("svar")) {
                 i++;//LEXICO(TOKEN)
                 if (listToken.get(i).getSimbol().equals("sidentificador")) {
@@ -101,16 +97,16 @@ public class SyntaticAnalyzer {
                         if (listToken.get(i).getSimbol().equals("spontvirg")) {
                             i++;//LEXICO(TOKEN)
                         } else {
-                            //ERROR
+                            throw new Exception("[Error] -- esperado ;");
                         }
                     }
                 } else {
-                    //ERROR
+                    throw new Exception("[Error] -- esperado um identificador");
                 }
             }
         }
 
-    private void AnalyzeVariables () {
+    private void AnalyzeVariables () throws Exception{
         do {
             if (listToken.get(i).getSimbol().equals("sidentificador")) {
                 //boolean isDuplicated = DuplicateVarTableSearch(listToken.get(i).getLexema());
@@ -119,39 +115,40 @@ public class SyntaticAnalyzer {
                     if (listToken.get(i).getSimbol().equals("svirgula")) {
                         i++;
                         if (listToken.get(i).getSimbol().equals("sdoispontos")) {
-                            //ERRO
+                            throw new Exception("[Error] -- simbolo errado \":\" após \",\"");
                         }
                     }
                 } else {
-                    //ERROR
+                    throw new Exception("[Error] -- simbolo errado esperado \":\" ou \",\"");
                 }
             } else {
-                //ERROR
+                throw new Exception("[Error] -- esperado um identificador para variavel");
             }
         } while (listToken.get(i).getSimbol().equals("sidentificador"));
         i++;
-        this.AnalyzeType();
+        AnalyzeType();
     }
 
-    private void AnalyzeType () {
+    private void AnalyzeType () throws Exception {
         if (!listToken.get(i).getSimbol().equals("sinteiro") && !listToken.get(i).getSimbol().equals("sbooleano")) {
-            //ERROR
+            throw new Exception("[Error] -- tipo não esperado");
         } else {
             //colocar tipo tabela ()
             i++;
         }
     }
 
-    private  void ChProcedureAtributeAnalyzer(){
+    private  void ChProcedureAtributeAnalyzer()throws Exception{
             i++;
             if(listToken.get(i).getSimbol().equals("satribuicao")){
                 //attributionAnalyzer();
             }else{
                 //Chamada Procedimento
+                i++;
             }
-        }
+    }
 
-    private  void ReadAnalyzer(){
+    private  void ReadAnalyzer()throws Exception{
         i++;
         if(listToken.get(i).getSimbol().equals("sabre_parenteses")){
             i++;
@@ -160,17 +157,17 @@ public class SyntaticAnalyzer {
                 if(listToken.get(i).getSimbol().equals("sfecha_parenteses")){
                     i++;
                 }else{
-                    //ERROR
+                    throw new Exception("[Error] -- esperado )");
                 }
             }else{
-                //ERROR
+                throw new Exception("[Error] -- esperado um identificador");
             }
         }else{
-            //ERROR
+            throw new Exception("[Error] -- esperado um (");
         }
     }
 
-    private void WriteAnalyzer(){
+    private void WriteAnalyzer()throws Exception{
         i++;
         if(listToken.get(i).getSimbol().equals("sabre_parenteses")){
             i++;
@@ -179,28 +176,28 @@ public class SyntaticAnalyzer {
                 if (listToken.get(i).getSimbol().equals("sfecha_parenteses")) {
                     i++;
                 } else {
-                    //ERRO
+                    throw new Exception("[Error] -- esperado um )");
                 }
             }else{
-                //ERRO
+                throw new Exception("[Error] -- esperado um identificador");
             }
         }else{
-            //ERRO
+            throw new Exception("[Error] -- esperado um (");
         }
     }
 
-    private  void WhileAnalyzer(){
+    private  void WhileAnalyzer()throws Exception{
         i++;
         ExpressionAnalyzer();
         if(listToken.get(i).getSimbol().equals("sfaca")){
             i++;
             SimpleCommandAnalyser();
         }else{
-            //ERROR
+            throw new Exception("[Error] -- esperado uma palavra reservada faça");
         }
     }
 
-    private  void IfAnalyzer(){
+    private  void IfAnalyzer()throws Exception{
         i++;
         ExpressionAnalyzer();
         if(listToken.get(i).getSimbol().equals("sentao")){
@@ -213,10 +210,10 @@ public class SyntaticAnalyzer {
         }
     }
 
-    private void AnalyzeSubRoutine () {
+    private void AnalyzeSubRoutine ()throws Exception {
             int flag=0;
             if(listToken.get(i).getSimbol().equals("sprocedimento")||listToken.get(i).getSimbol().equals("sfuncao")) {
-                while (listToken.get(i).getSimbol().equals("sprocedimento") && listToken.get(i).getSimbol().equals("sfuncao")) {
+                while (listToken.get(i).getSimbol().equals("sprocedimento") || listToken.get(i).getSimbol().equals("sfuncao")) {
                     if (listToken.get(i).getSimbol().equals("sprocedimento")) {
                         ProcedureDeclarationAnalyzer();
                     } else {
@@ -225,7 +222,7 @@ public class SyntaticAnalyzer {
                     if(listToken.get(i).getSimbol().equals("sponto-virgula")){
                         i++;
                     }else{
-                        //ERROR
+                        throw new Exception("[Error] -- esperado um ;");
                     }
                 }
                 if(flag==1){
@@ -234,21 +231,21 @@ public class SyntaticAnalyzer {
             }
     }
 
-    private void ProcedureDeclarationAnalyzer(){
+    private void ProcedureDeclarationAnalyzer()throws Exception{
         i++;
         if(listToken.get(i).getSimbol().equals("sidentificador")){
                  i++;
                  if(listToken.get(i).getSimbol().equals("sponto-virgula")){
                      BlockAnalyzer();
                  }else{
-                     //ERROR
+                     throw new Exception("[Error] -- esperado ;");
                  }
         }else{
-            //ERROR
+            throw new Exception("[Error] -- esperado um identificador");
         }
     }
 
-    private void FunctionDeclarationAnalyzer(){
+    private void FunctionDeclarationAnalyzer()throws Exception{
         i++;
         if(listToken.get(i).getSimbol().equals("sidentificador")){
             i++;
@@ -260,17 +257,17 @@ public class SyntaticAnalyzer {
                         BlockAnalyzer();
                     }
                 }else{
-                    //ERRO
+                    throw new Exception("[Error] -- esperado um tipo valido");
                 }
             }else{
-                //ERRO
+                throw new Exception("[Error] -- esperado :");
             }
         }else{
-            //ERRO
+            throw new Exception("[Error] -- esperado um identificador valido");
         }
     }
 
-    private void ExpressionAnalyzer(){
+    private void ExpressionAnalyzer()throws Exception{
         SimpleExpressionAnalyzer();
         if(listToken.get(i).getSimbol().equals("smaior") ||
                 listToken.get(i).getSimbol().equals("smaiorig") ||
@@ -284,7 +281,7 @@ public class SyntaticAnalyzer {
 
     }
 
-    private void SimpleExpressionAnalyzer(){
+    private void SimpleExpressionAnalyzer()throws Exception{
         if(listToken.get(i).getSimbol().equals("smais")||listToken.get(i).getSimbol().equals("smenos")){
             i++;
             TermAnalyzer();
@@ -297,7 +294,7 @@ public class SyntaticAnalyzer {
         }
     }
 
-    private void TermAnalyzer(){
+    private void TermAnalyzer()throws Exception{
         FactorAnalyzer();
         while (listToken.get(i).getSimbol().equals("smult") ||
                 listToken.get(i).getSimbol().equals("sdiv") ||
@@ -307,9 +304,9 @@ public class SyntaticAnalyzer {
         }
     }
 
-    private void FactorAnalyzer(){
+    private void FactorAnalyzer()throws Exception{
         if(listToken.get(i).getSimbol().equals("sidentificador")){
-
+                //Chamada_função
         }else if(listToken.get(i).getSimbol().equals("snumero")){
             i++;
 
@@ -322,12 +319,12 @@ public class SyntaticAnalyzer {
             if(listToken.get(i).getSimbol().equals("sfecha_parenteses")){
                 i++;
             }else{
-                //ERRO
+                throw new Exception("[Error] -- esperado um )");
             }
         }else if(listToken.get(i).getLexema().equals(true)||listToken.get(i).getLexema().equals(false)){
             i++;
         } else{
-            //ERRO
+            throw new Exception("[Error] -- experado lexema");
         }
     }
 
