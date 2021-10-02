@@ -1,5 +1,6 @@
 package compilador;
 
+import Consts.Symbols;
 import compilador.models.Token;
 
 import java.util.LinkedList;
@@ -39,11 +40,12 @@ public class LexicalAnalizer {
 
             if (i < length) {
                 getToken();
+                //i++;
             }
         }
-        for (Token token : listToken) {
-            System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
-        }
+//        for (Token token : listToken) {
+//            System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
+//        }
         return listToken;
     }
 
@@ -84,7 +86,7 @@ public class LexicalAnalizer {
             i++;
         }
         i--;
-        listToken.add(new Token(digit,"snumero"));
+        listToken.add(new Token(digit, Symbols.SNUMERO));
     }
 
     private void managerIdentifyAndReservedWord() {
@@ -106,9 +108,11 @@ public class LexicalAnalizer {
         i++;
         if ((char) data[i] == '=') {
             operatorAttribution += (char) data[i];
-            listToken.add(new Token(operatorAttribution, "satribuicao"));
+            listToken.add(new Token(operatorAttribution, Symbols.SATRIBUICAO));
         } else {
-            listToken.add(new Token(operatorAttribution, "sdoispontos"));// TODO: perguntar professor
+            listToken.add(new Token(operatorAttribution, Symbols.SDOIS_PONTOS));
+            i--;
+
         }
     }
 
@@ -116,15 +120,15 @@ public class LexicalAnalizer {
         String operatorArithmetic = new String();
         operatorArithmetic += (char) data[i];
         if ((char) data[i] == '+') {
-            listToken.add(new Token(operatorArithmetic, "smais"));
+            listToken.add(new Token(operatorArithmetic, Symbols.SMAIS));
             return;
         }
         if ((char) data[i] == '-') {
-            listToken.add(new Token(operatorArithmetic, "smenos"));
+            listToken.add(new Token(operatorArithmetic,  Symbols.SMENOS));
             return;
         }
         if ((char) data[i] == '*') {
-            listToken.add(new Token(operatorArithmetic, "smult"));
+            listToken.add(new Token(operatorArithmetic, Symbols.SMULT));
             return;
         }
     }
@@ -136,7 +140,7 @@ public class LexicalAnalizer {
             i++;
             if ((char) data[i] == '=') {
                 relationalOperator += (char) data[i];
-                listToken.add(new Token(relationalOperator, "sdif"));
+                listToken.add(new Token(relationalOperator, Symbols.SDIF));
                 return;
             }
             throw new Exception("[Error] -- "+(line+1)+":"+(i-col)+"||=> "+ (char)data[i] + " is not a !=");
@@ -146,10 +150,10 @@ public class LexicalAnalizer {
             i++;
             if ((char) data[i] == '=') {
                 relationalOperator += (char) data[i];
-                listToken.add(new Token(relationalOperator, "smenorig"));
+                listToken.add(new Token(relationalOperator, Symbols.SMENORIG));
                 return;
             }
-            listToken.add(new Token(relationalOperator, "smenor"));
+            listToken.add(new Token(relationalOperator, Symbols.SMENOR));
             i--;
             return;
         }
@@ -157,15 +161,15 @@ public class LexicalAnalizer {
             i++;
             if ((char) data[i] == '=') {
                 relationalOperator += (char) data[i];
-                listToken.add(new Token(relationalOperator, "smaiorig"));
+                listToken.add(new Token(relationalOperator, Symbols.SMAIORIG));
                 return;
             }
-            listToken.add(new Token(relationalOperator, "smaior"));
+            listToken.add(new Token(relationalOperator, Symbols.SMAIOR));
             i--;
             return;
         }
         if ((char) data[i] == '=') {
-            listToken.add(new Token(relationalOperator, "sig"));
+            listToken.add(new Token(relationalOperator,Symbols.SIG));
             return;
         }
     }
@@ -174,23 +178,23 @@ public class LexicalAnalizer {
         String pontuation = new String();
         pontuation += (char) data[i];
         if ((char) data[i] == ';') {
-            listToken.add(new Token(pontuation, "sponto_virgula"));
+            listToken.add(new Token(pontuation, Symbols.SPONTO_VIRGULA));
             return;
         }
         if ((char) data[i] == ',') {
-            listToken.add(new Token(pontuation, "svirgula"));
+            listToken.add(new Token(pontuation, Symbols.SVIRGULA));
             return;
         }
         if ((char) data[i] == '(') {
-            listToken.add(new Token(pontuation, "sabre_parenteses"));
+            listToken.add(new Token(pontuation, Symbols.SABRE_PARENTESES));
             return;
         }
         if ((char) data[i] == ')') {
-            listToken.add(new Token(pontuation, "sfecha_parenteses"));
+            listToken.add(new Token(pontuation, Symbols.SFECHA_PARENTESES));
             return;
         }
         if ((char) data[i] == '.') {
-            listToken.add(new Token(pontuation, "sponto"));
+            listToken.add(new Token(pontuation, Symbols.SPONTO));
             return;
         }
     }
@@ -198,70 +202,70 @@ public class LexicalAnalizer {
     private String verifyIdentifyAndReservedWord(String id) {
         switch (id) {
             case "programa":
-                return "sprograma";
+                return Symbols.SPROGRAMA;
 
             case "se":
-                return "sse";
+                return Symbols.SSE;
 
             case "entao":
-                return "sentao";
+                return Symbols.SENTAO;
 
             case "senao":
-                return "ssenao";
+                return Symbols.SSENAO;
 
             case "enquanto":
-                return "senquanto";
+                return Symbols.SENQUANTO;
 
             case "faca":
-                return "sfaca";
+                return Symbols.SFACA;
 
             case "inicio":
-                return "sinicio";
+                return Symbols.SINICIO;
 
             case "fim":
-                return "sfim";
+                return Symbols.SFIM;
 
             case "escreva":
-                return "sescreva";
+                return Symbols.SESCREVA;
 
             case "leia":
-                return "sleia";
+                return Symbols.SLEIA;
 
             case "var":
-                return "svar";
+                return Symbols.SVAR;
 
             case "inteiro":
-                return "sinteiro";
+                return Symbols.SINTEIRO;
 
             case "booleano":
-                return "sbooleano";
+                return Symbols.SBOOLEANO;
 
             case "verdadeiro":
-                return "sverdadeiro";
+                return Symbols.SVERDADEIRO;
 
             case "falso":
-                return "sfalso";
+                return Symbols.SFALSO;
 
             case "procedimento":
-                return "sprocedimento";
+                return Symbols.SPROCEDIMENTO;
 
             case "funcao":
-                return "sfuncao";
+                return Symbols.SFUNCAO;
 
             case "div":
-                return "sdiv";
+                return Symbols.SDIV;
 
             case "e":
-                return "se";
+                return Symbols.SE;
 
             case "ou":
-                return "sou";
+                return Symbols.SOU;
 
             case "nao":
-                return "snao";
+                return Symbols.SNAO;
 
             default:
-                return "sidentificador";
+                return Symbols.SIDENTIFICADOR;
         }
     }
 
