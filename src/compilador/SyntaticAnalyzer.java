@@ -26,7 +26,7 @@ public class SyntaticAnalyzer {
                     i++;//LEXICO(TOKEN)
                     if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                         BlockAnalyzer();
-                        if (listToken.get(i).getSimbol().equals(Symbols.SPONTO)) {
+                        if (i<listToken.size() && listToken.get(i).getSimbol().equals(Symbols.SPONTO) ) {
                             if (listToken.size() - 1 < i) {//TODO: como é comentário?
                                 throw new Exception("[Error] -- Arquivo não terminou com erro");
                             }
@@ -67,7 +67,7 @@ public class SyntaticAnalyzer {
             }
             i++;
         } else {
-            throw new Exception("[Error] -- esperado um identificador de inicio no lugar de: "+listToken.get(i).getSimbol());
+            throw new Exception("[Error] -- esperado \"inicio\" no lugar de: "+listToken.get(i).getSimbol());
         }
     }
 
@@ -176,7 +176,7 @@ public class SyntaticAnalyzer {
                 if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                     i++;
                 } else {
-                    throw new Exception("[Error] -- esperado um )");
+                    throw new Exception("[Error] -- esperado um )1");
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador");
@@ -226,7 +226,7 @@ public class SyntaticAnalyzer {
             if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                 i++;
             } else {
-                throw new Exception("[Error] -- esperado um ;3");
+                throw new Exception("[Error] -- inesperado: "+listToken.get(i).getSimbol());
             }
         }
         if (flag == 1) {
@@ -321,7 +321,7 @@ public class SyntaticAnalyzer {
             if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                 i++;
             } else {
-                throw new Exception("[Error] -- esperado um )");
+                throw new Exception("[Error] -- esperado um ) em vez de: "+listToken.get(i).getSimbol());
             }
         } else if (listToken.get(i).getLexema().equals(true) || listToken.get(i).getLexema().equals(false)) {
             i++;
