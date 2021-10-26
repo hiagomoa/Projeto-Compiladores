@@ -19,6 +19,8 @@ public class SymbolTable {
     public SymbolTable(String lexeme, String type) {
         Lexeme = lexeme;
         Type = type;
+        Level = null;
+        Label = null;
     }
 
     public String getLexeme() {

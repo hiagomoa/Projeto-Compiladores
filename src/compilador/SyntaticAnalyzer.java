@@ -12,7 +12,7 @@ public class SyntaticAnalyzer {
     int label;
     int i = 0;
     LinkedList<Token> listToken;
-    LinkedList<SymbolTable> symbolTable;
+    LinkedList<SymbolTable> symbolTable = new LinkedList<SymbolTable>();
     String level;
 
     public SyntaticAnalyzer(LinkedList<Token> data) throws Exception {
@@ -48,6 +48,10 @@ public class SyntaticAnalyzer {
                 }
             }
         }
+        for (SymbolTable element : symbolTable) {
+            System.out.println(element);
+        }
+
     }
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
@@ -56,7 +60,6 @@ public class SyntaticAnalyzer {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -189,15 +192,16 @@ public class SyntaticAnalyzer {
     private void AnalyzeType() throws Exception {
         if (!listToken.get(i).getSimbol().equals(Symbols.SINTEIRO) && !listToken.get(i).getSimbol().equals(Symbols.SBOOLEANO)) {
             throw new Exception("[Error] -- tipo não esperado");
-        } else {
-            //colocar tipo tabela ()
+        }else{
             PushTypeIntoTheTable(listToken.get(i).getLexema());
         }
         i++;
     }
 
-    private void PushTypeIntoTheTable(String lexema) {
-        // TODO: descobrir wow
+    private void PushTypeIntoTheTable(String lexeme) throws Exception {
+        SymbolTable element = symbolTable.pop();
+        element.setType(lexeme);
+        symbolTable.push(element);
     }
 
     private void ChProcedureAtributeAnalyzer() throws Exception {
@@ -216,7 +220,7 @@ public class SyntaticAnalyzer {
         if (listToken.get(i).getSimbol().equals(Symbols.SABRE_PARENTESES)) {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                if (!SearchDeclarationVariableOnTable(listToken.get(i).getLexema())) {
+                if (SearchDeclarationVariableOnTable(listToken.get(i).getLexema())) {
                     i++;
                     if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                         i++;
@@ -239,7 +243,7 @@ public class SyntaticAnalyzer {
         if (listToken.get(i).getSimbol().equals(Symbols.SABRE_PARENTESES)) {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                if (!SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
+                if (SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
                     i++;
                     if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                         i++;
@@ -247,7 +251,7 @@ public class SyntaticAnalyzer {
                         throw new Exception("[Error] -- esperado um )1");
                     }
                 } else {
-                    //ERRO
+                    throw new Exception("[Error] -- 2");
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador");
@@ -312,7 +316,7 @@ public class SyntaticAnalyzer {
 
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
 
-            if (SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
+            if (!SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
                 InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROCEDURE, level, 0);//TODO: ajustar label
                 i++;
                 if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
@@ -321,7 +325,7 @@ public class SyntaticAnalyzer {
                     throw new Exception("[Error] -- esperado ;");
                 }
             } else {
-                //ERROR
+                throw new Exception("[Error] -- 3");
             }
 
 
@@ -345,10 +349,13 @@ public class SyntaticAnalyzer {
                 if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
                     i++;
                     if (listToken.get(i).getSimbol().equals(Symbols.SINTEIRO) || listToken.get(i).getSimbol().equals(Symbols.SBOOLEANO)) {
+                        SymbolTable element = symbolTable.pop();
                         if (listToken.get(i).getSimbol().equals(Symbols.SINTEIRO)) {
-                            symbolTable.get(0).setType(SymbolTableType.STINTFUNCTION);//TODO: verificar index que tem q pegar, no slide esta "PC"
+                            element.setType(SymbolTableType.STINTFUNCTION);
+                            symbolTable.push(element);
                         } else {
-                            symbolTable.get(0).setType(SymbolTableType.STBOOLFUNCTION);//TODO: verificar index que tem q pegar, no slide esta "PC"
+                            element.setType(SymbolTableType.STBOOLFUNCTION);
+                            symbolTable.push(element);
                         }
                         i++;
                         if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
@@ -361,7 +368,7 @@ public class SyntaticAnalyzer {
                     throw new Exception("[Error] -- esperado :");
                 }
             } else {
-                //ERror
+                throw new Exception("[Error] -- 4");
             }
         } else {
             throw new Exception("[Error] -- esperado um identificador valido");
@@ -410,14 +417,13 @@ public class SyntaticAnalyzer {
         int index = 0;
         for (SymbolTable element : symbolTable) {
             index++;
-            if (element.getLevel().equals(level)) {
+         //   if (element.getLevel().equals(level)) {
                 if (element.getLexeme().equals(lexeme)) {
                     return index;
                 }
-            }
+           // }
         }
         return -1;
-
     }
 
     private void FactorAnalyzer() throws Exception {
@@ -430,7 +436,7 @@ public class SyntaticAnalyzer {
                     i++;
                 }
             } else {
-                //ERROR
+                throw new Exception("[Error] -- 5");
             }
         } else if (listToken.get(i).getSimbol().equals(Symbols.SNUMERO)) {
             i++;
