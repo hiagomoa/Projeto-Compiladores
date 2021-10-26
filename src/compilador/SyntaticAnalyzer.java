@@ -4,6 +4,7 @@ import Consts.SymbolTableType;
 import Consts.Symbols;
 import compilador.models.SymbolTable;
 import compilador.models.Token;
+import jdk.jshell.spi.ExecutionControlProvider;
 
 import java.util.LinkedList;
 import java.util.Optional;
@@ -52,6 +53,15 @@ public class SyntaticAnalyzer {
             System.out.println(element);
         }
 
+    }
+
+    private void Unstack() throws Exception{
+        for (SymbolTable element : symbolTable) {
+            if(!element.getLevel().equals("L")){
+                symbolTable.pop();
+            }
+        }
+        symbolTable.pop();
     }
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
@@ -333,7 +343,7 @@ public class SyntaticAnalyzer {
             throw new Exception("[Error] -- esperado um identificador");
         }
         // DESEMPILHA OU VOLTA NÍVEL
-        symbolTable.pop();
+        Unstack();
         level = "";
     }
 
@@ -373,7 +383,7 @@ public class SyntaticAnalyzer {
         } else {
             throw new Exception("[Error] -- esperado um identificador valido");
         }
-        symbolTable.pop();
+        Unstack();
         level = "";
     }
 
