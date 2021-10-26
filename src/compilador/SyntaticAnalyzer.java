@@ -66,8 +66,10 @@ public class SyntaticAnalyzer {
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
         for (SymbolTable element : symbolTable) {
-            if (element.getLexeme().equals(lexeme)) {
-                return true;
+            if(element.getLevel() == null) {
+                if (element.getLexeme().equals(lexeme)) {
+                    return true;
+                }
             }
         }
         return false;
