@@ -1,14 +1,19 @@
 package compilador;
 
+import Consts.SymbolTableType;
 import Consts.Symbols;
+import compilador.models.SymbolTable;
 import compilador.models.Token;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
 public class SyntaticAnalyzer {
     int label;
     int i = 0;
     LinkedList<Token> listToken;
+    LinkedList<SymbolTable> symbolTable;
+    String level;
 
     public SyntaticAnalyzer(LinkedList<Token> data) throws Exception {
         this.listToken = data;
@@ -24,9 +29,11 @@ public class SyntaticAnalyzer {
                 i++;//LEXICO(TOKEN)
                 if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
                     i++;//LEXICO(TOKEN)
+                    InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROGRAMNAME, null, null);
+
                     if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                         BlockAnalyzer();
-                        if (i<listToken.size() && listToken.get(i).getSimbol().equals(Symbols.SPONTO) ) {
+                        if (i < listToken.size() && listToken.get(i).getSimbol().equals(Symbols.SPONTO)) {
                             if (listToken.size() - 1 < i) {//TODO: como é comentário?
                                 throw new Exception("[Error] -- Arquivo não terminou com erro");
                             }
@@ -43,6 +50,51 @@ public class SyntaticAnalyzer {
         }
     }
 
+    private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
+        for (SymbolTable element : symbolTable) {
+            if (element.getLexeme().equals(lexeme)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean SearchDeclarationVariableOnTable(String lexeme) throws Exception {
+        for (SymbolTable element : symbolTable) {
+            if (element.getLexeme().equals(lexeme)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean SearchDeclarationFunctionOnTable(String lexeme) throws Exception {
+        for (SymbolTable element : symbolTable) {
+            if (element.getLexeme().equals(lexeme)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean SearchDeclarationProcedureOnTable(String lexeme) throws Exception {
+        for (SymbolTable element : symbolTable) {
+            if (element.getLexeme().equals(lexeme)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void InsertTable(String lexeme, String type, String level, Integer label) throws Exception {
+        if (label != null && level != null) {
+            symbolTable.push(new SymbolTable(lexeme, type, level, label));
+            return;
+        }
+        symbolTable.push(new SymbolTable(lexeme, type));
+    }
+
     private void BlockAnalyzer() throws Exception {
         i++;
         AnalyzeVariablesDeclaration();
@@ -50,6 +102,7 @@ public class SyntaticAnalyzer {
         AnalyzeCommands();
 
     }
+
     //TODO: analisar ponto e virgula antes do fim, teste sint9.txt
     private void AnalyzeCommands() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SINICIO)) {
@@ -62,12 +115,12 @@ public class SyntaticAnalyzer {
                         SimpleCommandAnalyser();
                     }
                 } else {
-                    throw new Exception("[Error] inesperado: "+listToken.get(i).getSimbol());
+                    throw new Exception("[Error] inesperado: " + listToken.get(i).getSimbol());
                 }
             }
             i++;
         } else {
-            throw new Exception("[Error] -- esperado \"inicio\" no lugar de: "+listToken.get(i).getSimbol());
+            throw new Exception("[Error] -- esperado \"inicio\" no lugar de: " + listToken.get(i).getSimbol());
         }
     }
 
@@ -108,17 +161,22 @@ public class SyntaticAnalyzer {
     private void AnalyzeVariables() throws Exception {
         do {
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                //boolean isDuplicated = DuplicateVarTableSearch(listToken.get(i).getLexema());
-                i++;
-                if (listToken.get(i).getSimbol().equals(Symbols.SVIRGULA) || listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
-                    if (listToken.get(i).getSimbol().equals(Symbols.SVIRGULA)) {
-                        i++;
-                        if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
-                            throw new Exception("[Error] -- simbolo não esperado: "+listToken.get(i).getSimbol());
+                boolean isDuplicated = SearchDuplicatedVarInTable(listToken.get(i).getLexema());
+                if (!isDuplicated) {
+                    InsertTable(listToken.get(i).getLexema(), SymbolTableType.STVARIABLE, null, null);
+                    i++;
+                    if (listToken.get(i).getSimbol().equals(Symbols.SVIRGULA) || listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
+                        if (listToken.get(i).getSimbol().equals(Symbols.SVIRGULA)) {
+                            i++;
+                            if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
+                                throw new Exception("[Error] -- simbolo não esperado: " + listToken.get(i).getSimbol());
+                            }
                         }
+                    } else {
+                        throw new Exception("[Error] -- simbolo errado esperado \":\" ou \",\"");
                     }
                 } else {
-                    throw new Exception("[Error] -- simbolo errado esperado \":\" ou \",\"");
+                    throw new Exception("[Error] -- simbolo duplicado");
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador para variavel");
@@ -133,8 +191,13 @@ public class SyntaticAnalyzer {
             throw new Exception("[Error] -- tipo não esperado");
         } else {
             //colocar tipo tabela ()
+            PushTypeIntoTheTable(listToken.get(i).getLexema());
         }
         i++;
+    }
+
+    private void PushTypeIntoTheTable(String lexema) {
+        // TODO: descobrir wow
     }
 
     private void ChProcedureAtributeAnalyzer() throws Exception {
@@ -144,7 +207,7 @@ public class SyntaticAnalyzer {
             ExpressionAnalyzer();
         } else {
             //Chamada Procedimento
-           // i++;
+            // i++;
         }
     }
 
@@ -153,11 +216,15 @@ public class SyntaticAnalyzer {
         if (listToken.get(i).getSimbol().equals(Symbols.SABRE_PARENTESES)) {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                i++;
-                if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
+                if (!SearchDeclarationVariableOnTable(listToken.get(i).getLexema())) {
                     i++;
+                    if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
+                        i++;
+                    } else {
+                        throw new Exception("[Error] -- esperado )");
+                    }
                 } else {
-                    throw new Exception("[Error] -- esperado )");
+                    throw new Exception("[Error] -- Esperado uma declaração");
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador");
@@ -172,11 +239,15 @@ public class SyntaticAnalyzer {
         if (listToken.get(i).getSimbol().equals(Symbols.SABRE_PARENTESES)) {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                i++;
-                if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
+                if (!SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
                     i++;
+                    if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
+                        i++;
+                    } else {
+                        throw new Exception("[Error] -- esperado um )1");
+                    }
                 } else {
-                    throw new Exception("[Error] -- esperado um )1");
+                    //ERRO
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador");
@@ -226,7 +297,7 @@ public class SyntaticAnalyzer {
             if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                 i++;
             } else {
-                throw new Exception("[Error] -- inesperado: "+listToken.get(i).getSimbol());
+                throw new Exception("[Error] -- inesperado: " + listToken.get(i).getSimbol());
             }
         }
         if (flag == 1) {
@@ -237,38 +308,66 @@ public class SyntaticAnalyzer {
 
     private void ProcedureDeclarationAnalyzer() throws Exception {
         i++;
+        level = "L";
+
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-            i++;
-            if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
-                BlockAnalyzer();
+
+            if (SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
+                InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROCEDURE, level, 0);//TODO: ajustar label
+                i++;
+                if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
+                    BlockAnalyzer();
+                } else {
+                    throw new Exception("[Error] -- esperado ;");
+                }
             } else {
-                throw new Exception("[Error] -- esperado ;");
+                //ERROR
             }
+
+
         } else {
             throw new Exception("[Error] -- esperado um identificador");
         }
+        // DESEMPILHA OU VOLTA NÍVEL
+        symbolTable.pop();
+        level = "";
     }
 
     private void FunctionDeclarationAnalyzer() throws Exception {
         i++;
+        level = "L";
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-            i++;
-            if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
+
+
+            if (SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
+                InsertTable(listToken.get(i).getLexema(), "", level, 0);//TODO: veriricar label
                 i++;
-                if (listToken.get(i).getSimbol().equals(Symbols.SINTEIRO) || listToken.get(i).getSimbol().equals(Symbols.SBOOLEANO)) {
+                if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
                     i++;
-                    if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
-                        BlockAnalyzer();
+                    if (listToken.get(i).getSimbol().equals(Symbols.SINTEIRO) || listToken.get(i).getSimbol().equals(Symbols.SBOOLEANO)) {
+                        if (listToken.get(i).getSimbol().equals(Symbols.SINTEIRO)) {
+                            symbolTable.get(0).setType(SymbolTableType.STINTFUNCTION);//TODO: verificar index que tem q pegar, no slide esta "PC"
+                        } else {
+                            symbolTable.get(0).setType(SymbolTableType.STBOOLFUNCTION);//TODO: verificar index que tem q pegar, no slide esta "PC"
+                        }
+                        i++;
+                        if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
+                            BlockAnalyzer();
+                        }
+                    } else {
+                        throw new Exception("[Error] -- esperado um tipo valido");
                     }
                 } else {
-                    throw new Exception("[Error] -- esperado um tipo valido");
+                    throw new Exception("[Error] -- esperado :");
                 }
             } else {
-                throw new Exception("[Error] -- esperado :");
+                //ERror
             }
         } else {
             throw new Exception("[Error] -- esperado um identificador valido");
         }
+        symbolTable.pop();
+        level = "";
     }
 
     private void ExpressionAnalyzer() throws Exception {
@@ -307,9 +406,32 @@ public class SyntaticAnalyzer {
         }
     }
 
+    private int searchTable(String lexeme, String level) {
+        int index = 0;
+        for (SymbolTable element : symbolTable) {
+            index++;
+            if (element.getLevel().equals(level)) {
+                if (element.getLexeme().equals(lexeme)) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+
+    }
+
     private void FactorAnalyzer() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-            i++;
+            int ind = searchTable(listToken.get(i).getLexema(), level);
+            if (ind != -1) {
+                if (symbolTable.get(ind).getType().equals(SymbolTableType.STINTFUNCTION) || symbolTable.get(ind).getType().equals(SymbolTableType.STBOOLFUNCTION)) {
+                    i++;//TODO: ANALISA CHAMADA DE FUNÇÃO
+                } else {
+                    i++;
+                }
+            } else {
+                //ERROR
+            }
         } else if (listToken.get(i).getSimbol().equals(Symbols.SNUMERO)) {
             i++;
         } else if (listToken.get(i).getSimbol().equals(Symbols.SNAO)) {
@@ -321,12 +443,12 @@ public class SyntaticAnalyzer {
             if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                 i++;
             } else {
-                throw new Exception("[Error] -- esperado um ) em vez de: "+listToken.get(i).getSimbol());
+                throw new Exception("[Error] -- esperado um ) em vez de: " + listToken.get(i).getSimbol());
             }
         } else if (listToken.get(i).getLexema().equals(true) || listToken.get(i).getLexema().equals(false)) {
             i++;
         } else {
-            throw new Exception("[Error] -- token invalido: "+(listToken.get(i).getLexema()));
+            throw new Exception("[Error] -- token invalido: " + (listToken.get(i).getLexema()));
         }
     }
 
