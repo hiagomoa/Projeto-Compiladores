@@ -50,27 +50,23 @@ public class SyntaticAnalyzer {
             }
         }
         for (SymbolTable element : symbolTable) {
-            System.out.println(element);
+            System.out.println(element.getLevel()+" "+element.getLexeme()+" "+element.getType());
         }
-
     }
 
     private void Unstack() throws Exception{
-        for (SymbolTable element : symbolTable) {
-            System.out.println(element.getLevel());
-            if(element.getLevel() == null){
+        for (int i=0; i<symbolTable.size(); i++) {
+            if(symbolTable.get(i).getLevel() == null){
                 symbolTable.pop();
-            }else if(element.getLevel().equals("L")){
+            }else if(symbolTable.get(i).getLevel().equals("L")){
                 symbolTable.pop();
                 break;
             }
         }
-        System.out.println("OPA");
     }
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
         for (SymbolTable element : symbolTable) {
-            System.out.println(element.getLevel());
             if(element.getLevel() == null) {
                 if (element.getLexeme().equals(lexeme)) {
                     return true;
@@ -360,9 +356,7 @@ public class SyntaticAnalyzer {
         i++;
         level = "L";
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-
-
-            if (SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
+            if (!SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
                 InsertTable(listToken.get(i).getLexema(), "", level, 0);//TODO: veriricar label
                 i++;
                 if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
