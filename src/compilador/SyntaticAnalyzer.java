@@ -57,19 +57,26 @@ public class SyntaticAnalyzer {
 
     private void Unstack() throws Exception{
         for (SymbolTable element : symbolTable) {
-            if(!element.getLevel().equals("L")){
+            System.out.println(element.getLevel());
+            if(element.getLevel() == null){
                 symbolTable.pop();
+            }else if(element.getLevel().equals("L")){
+                symbolTable.pop();
+                break;
             }
         }
-        symbolTable.pop();
+        System.out.println("OPA");
     }
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
         for (SymbolTable element : symbolTable) {
+            System.out.println(element.getLevel());
             if(element.getLevel() == null) {
                 if (element.getLexeme().equals(lexeme)) {
                     return true;
                 }
+            }else if(element.getLevel().equals("L")){
+                return false;
             }
         }
         return false;
