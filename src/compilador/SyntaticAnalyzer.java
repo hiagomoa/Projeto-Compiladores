@@ -29,9 +29,8 @@ public class SyntaticAnalyzer {
             if (listToken.get(i).getSimbol().equals(Symbols.SPROGRAMA)) {
                 i++;//LEXICO(TOKEN)
                 if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                    i++;//LEXICO(TOKEN)
                     InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROGRAMNAME, null, null);
-
+                    i++;//LEXICO(TOKEN)
                     if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                         BlockAnalyzer();
                         if (i < listToken.size() && listToken.get(i).getSimbol().equals(Symbols.SPONTO)) {
@@ -56,10 +55,9 @@ public class SyntaticAnalyzer {
 
     private void Unstack() throws Exception{
         for (int i=0; i<symbolTable.size(); i++) {
-            if(symbolTable.get(i).getLevel() == null){
+            if (symbolTable.peek().getLevel() == null) {
                 symbolTable.pop();
-            }else if(symbolTable.get(i).getLevel().equals("L")){
-                symbolTable.pop();
+            } else {
                 break;
             }
         }
@@ -214,9 +212,14 @@ public class SyntaticAnalyzer {
     }
 
     private void PushTypeIntoTheTable(String lexeme) throws Exception {
-        SymbolTable element = symbolTable.pop();
-        element.setType(lexeme);
-        symbolTable.push(element);
+        for(int i=0; i < symbolTable.size(); i++){
+            if(symbolTable.get(i).getType().equals(SymbolTableType.STVARIABLE))
+            {
+                symbolTable.get(i).setType(lexeme);
+            }else{
+                break;
+            }
+        }
     }
 
     private void ChProcedureAtributeAnalyzer() throws Exception {
@@ -390,7 +393,7 @@ public class SyntaticAnalyzer {
         level = "";
     }
 
-    private void ExpressionAnalyzer() throws Exception {
+    private void ExpressionAnalyzer() throws Exception { //TODO: CHAMAR POS FIXICO APOS chamada desta função
         SimpleExpressionAnalyzer();
         if (listToken.get(i).getSimbol().equals(Symbols.SMAIOR) ||
                 listToken.get(i).getSimbol().equals(Symbols.SMAIORIG) ||
