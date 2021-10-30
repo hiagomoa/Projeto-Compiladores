@@ -2,11 +2,14 @@ package compilador;
 
 import Consts.SymbolTableType;
 import Consts.Symbols;
+import compilador.models.SignalNumbers;
 import compilador.models.SymbolTable;
 import compilador.models.Token;
 import jdk.jshell.spi.ExecutionControlProvider;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public class SyntaticAnalyzer {
@@ -14,6 +17,7 @@ public class SyntaticAnalyzer {
     int i = 0;
     LinkedList<Token> listToken;
     LinkedList<SymbolTable> symbolTable = new LinkedList<SymbolTable>();
+    LinkedList<SignalNumbers> inFixedList;
     String level;
 
     public SyntaticAnalyzer(LinkedList<Token> data) throws Exception {
@@ -34,7 +38,7 @@ public class SyntaticAnalyzer {
                     if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                         BlockAnalyzer();
                         if (i < listToken.size() && listToken.get(i).getSimbol().equals(Symbols.SPONTO)) {
-                            if (listToken.size() - 1 < i) {//TODO: como é comentário?
+                            if (listToken.size() - 1 < i) {
                                 throw new Exception("[Error] -- Arquivo não terminou com erro");
                             }
                         } else {
@@ -119,7 +123,6 @@ public class SyntaticAnalyzer {
 
     }
 
-    //TODO: analisar ponto e virgula antes do fim, teste sint9.txt
     private void AnalyzeCommands() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SINICIO)) {
             i++;
@@ -226,7 +229,22 @@ public class SyntaticAnalyzer {
         i++;
         if (listToken.get(i).getSimbol().equals(Symbols.SATRIBUICAO)) {
             i++;
+            inFixedList = new LinkedList<SignalNumbers>();
+            int initExpression = i;
             ExpressionAnalyzer();
+            int finishExpression = i;
+
+            List<Token> sliceInFixed = listToken.subList(initExpression,finishExpression);
+
+            inFixedList.forEach(element->{
+                sliceInFixed.get(element.getPosition()-initExpression).setLexema(element.getLexema());
+                sliceInFixed.get(element.getPosition()-initExpression).setSimbol(element.getSimbol());
+            });
+
+            new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+
+            System.out.println("\n");
+            //TODO: CHAMADA POS FIXO
         } else {
             //Chamada Procedimento
             // i++;
@@ -281,7 +299,22 @@ public class SyntaticAnalyzer {
 
     private void WhileAnalyzer() throws Exception {
         i++;
+        inFixedList = new LinkedList<SignalNumbers>();
+        int initExpression = i;
         ExpressionAnalyzer();
+        int finishExpression = i;
+
+        List<Token> sliceInFixed = listToken.subList(initExpression,finishExpression);
+
+        inFixedList.forEach(element->{
+            sliceInFixed.get(element.getPosition()-initExpression).setLexema(element.getLexema());
+            sliceInFixed.get(element.getPosition()-initExpression).setSimbol(element.getSimbol());
+        });
+
+        new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+
+        System.out.println("\n");
+        //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SFACA)) {
             i++;
             SimpleCommandAnalyser();
@@ -292,7 +325,23 @@ public class SyntaticAnalyzer {
 
     private void IfAnalyzer() throws Exception {
         i++;
+        inFixedList = new LinkedList<SignalNumbers>();
+        int initExpression = i;
         ExpressionAnalyzer();
+        int finishExpression = i;
+
+        List<Token> sliceInFixed = listToken.subList(initExpression,finishExpression);
+
+        inFixedList.forEach(element->{
+            sliceInFixed.get(element.getPosition()-initExpression).setLexema(element.getLexema());
+            sliceInFixed.get(element.getPosition()-initExpression).setSimbol(element.getSimbol());
+        });
+
+        new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+
+        System.out.println("\n");
+
+        //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
             i++;
             SimpleCommandAnalyser();
@@ -394,6 +443,7 @@ public class SyntaticAnalyzer {
     }
 
     private void ExpressionAnalyzer() throws Exception { //TODO: CHAMAR POS FIXICO APOS chamada desta função
+
         SimpleExpressionAnalyzer();
         if (listToken.get(i).getSimbol().equals(Symbols.SMAIOR) ||
                 listToken.get(i).getSimbol().equals(Symbols.SMAIORIG) ||
@@ -404,10 +454,19 @@ public class SyntaticAnalyzer {
             i++;
             SimpleExpressionAnalyzer();
         }
+
     }
 
     private void SimpleExpressionAnalyzer() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SMAIS) || listToken.get(i).getSimbol().equals(Symbols.SMENOS)) {
+            if(listToken.get(i).getSimbol().equals(Symbols.SMAIS)){
+                SignalNumbers t = new SignalNumbers("+u", Symbols.SPOSITIVO, i);
+                inFixedList.add(t);
+            }
+            if(listToken.get(i).getSimbol().equals(Symbols.SMENOS)){
+                SignalNumbers t = new SignalNumbers("-u", Symbols.SNEGATIVO, i);
+                inFixedList.add(t);
+            }
             i++;
         }
         TermAnalyzer();

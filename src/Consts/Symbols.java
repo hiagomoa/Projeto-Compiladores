@@ -80,4 +80,8 @@ public class Symbols {
     public static final String SMULT = "smult";
 
     public static final String SNUMERO = "snumero";
+
+    public static final String SPOSITIVO = "spositivo";
+
+    public static final String SNEGATIVO = "snegativo";
 }
