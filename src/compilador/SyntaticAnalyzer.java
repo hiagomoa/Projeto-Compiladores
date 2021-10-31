@@ -248,6 +248,11 @@ public class SyntaticAnalyzer {
 
             List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
             String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
+
+            if(!returnExitExpretion.equals(listToken.get(i-2).getSimbol())){
+                System.out.println("ERROR DE ATTRIBUIÇÃO");
+                //TODO: ERROR
+            }
             System.out.println("returnExitExpretion:"+returnExitExpretion);
             //TODO: CHAMADA POS FIXO
         } else {
@@ -319,6 +324,10 @@ public class SyntaticAnalyzer {
         List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
         System.out.println("returnExitExpretion:"+returnExitExpretion);
+        if(!returnExitExpretion.equals(Symbols.SBOOLEANO)){
+            System.out.println("ERROR");
+            //TODO:ERROR
+        }
         //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SFACA)) {
             i++;
@@ -344,9 +353,15 @@ public class SyntaticAnalyzer {
 
         List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
-        System.out.println("returnExitExpretion:"+returnExitExpretion);
 
-        //TODO: chama posfixo
+        System.out.println("returnExitExpretion:"+returnExitExpretion);
+        if(!returnExitExpretion.equals(Symbols.SBOOLEANO)){
+            System.out.println("ERROR");
+            //TODO:ERROR
+        }
+
+
+            //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
             i++;
             SimpleCommandAnalyser();

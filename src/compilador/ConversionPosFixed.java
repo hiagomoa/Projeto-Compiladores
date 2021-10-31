@@ -31,7 +31,8 @@ public class ConversionPosFixed {
             } else if (currentValue.getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                 do {
                     if (stack.peek().getSimbol().equals(Symbols.SABRE_PARENTESES)) {
-                        //TODO: Error
+                        //TODO: ERROR
+                        System.out.println("ERRO ESPERADO ALGO AQUI N SEI AINDA");
                     }
                     Exit.add(stack.pop());
                 } while (!stack.peek().getSimbol().equals(Symbols.SABRE_PARENTESES));
@@ -42,7 +43,7 @@ public class ConversionPosFixed {
                     currentValue.getSimbol().equals(Symbols.SMAIORIG) || currentValue.getSimbol().equals(Symbols.SMENORIG) ||
                     currentValue.getSimbol().equals(Symbols.SDIF) || currentValue.getSimbol().equals(Symbols.SE) ||
                     currentValue.getSimbol().equals(Symbols.SOU) || currentValue.getSimbol().equals(Symbols.SPOSITIVO) ||
-                    currentValue.getSimbol().equals(Symbols.SNEGATIVO)
+                    currentValue.getSimbol().equals(Symbols.SNEGATIVO) ||   currentValue.getSimbol().equals(Symbols.SNAO)
             ) {
                 while (true) {
                     if (!stack.isEmpty()) {
@@ -97,13 +98,13 @@ public class ConversionPosFixed {
         else if (current.getSimbol().equals(Symbols.SABRE_PARENTESES))
             pc = 0;
 
-        if (current.getSimbol().equals(Symbols.SDIF))
+        if (top.getSimbol().equals(Symbols.SDIF))
             pt = 9;
-        else if (current.getSimbol().equals(Symbols.SE))
+        else if (top.getSimbol().equals(Symbols.SE))
             pt = 8;
-        else if (current.getSimbol().equals(Symbols.SOU))
+        else if (top.getSimbol().equals(Symbols.SOU))
             pt = 7;
-        else if (current.getSimbol().equals(Symbols.SNAO))
+        else if (top.getSimbol().equals(Symbols.SNAO))
             pt = 6;
         else if (top.getSimbol().equals(Symbols.SMAIOR) || top.getSimbol().equals(Symbols.SMENOR) ||
                 top.getSimbol().equals(Symbols.SMAIORIG) || top.getSimbol().equals(Symbols.SMENORIG))

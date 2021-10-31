@@ -30,6 +30,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
+                    System.out.println("ERRO OPERAÇÃO ARITMETICA");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpArithmeticUnity")) {
@@ -37,6 +38,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
+                    System.out.println("ERRO SINALIZAÇÃO");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpRelational")) {
@@ -45,6 +47,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
+                    System.out.println("ERRO OPERADOR RELACIONAL");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpLogic")) {
@@ -53,6 +56,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SBOOLEANO) && param2.equals(Symbols.SBOOLEANO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
+                    System.out.println("ERRO OPERADOR LOGICO");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpLogicUnity")) {
@@ -60,16 +64,20 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SBOOLEANO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
+                    System.out.println("ERRO OPERADOR LOGICO NÃO");
                     //TODO: ERROR
                 }
             }
             i++;
         }
 
-        Token lastElement = stack.pop();
-        if (lastElement.getSimbol().equals(Symbols.SNUMERO)) {
-            return Symbols.SINTEIRO;
-        } else return lastElement.getSimbol();
+        while(!stack.isEmpty()) {
+            Token lastElement = stack.pop();
+            if (lastElement.getSimbol().equals(Symbols.SNUMERO)) {
+                return Symbols.SINTEIRO;
+            } else return lastElement.getSimbol();
+        }
+        return "";
     }
 
     private String analizeType(Token operator) {
