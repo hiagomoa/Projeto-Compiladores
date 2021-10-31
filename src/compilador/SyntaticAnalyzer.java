@@ -53,12 +53,12 @@ public class SyntaticAnalyzer {
             }
         }
         for (SymbolTable element : symbolTable) {
-            System.out.println(element.getLevel()+" "+element.getLexeme()+" "+element.getType());
+            System.out.println(element.getLevel() + " " + element.getLexeme() + " " + element.getType());
         }
     }
 
-    private void Unstack() throws Exception{
-        for (int i=0; i<symbolTable.size(); i++) {
+    private void Unstack() throws Exception {
+        for (int i = 0; i < symbolTable.size(); i++) {
             if (symbolTable.peek().getLevel() == null) {
                 symbolTable.pop();
             } else {
@@ -69,11 +69,11 @@ public class SyntaticAnalyzer {
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
         for (SymbolTable element : symbolTable) {
-            if(element.getLevel() == null) {
+            if (element.getLevel() == null) {
                 if (element.getLexeme().equals(lexeme)) {
                     return true;
                 }
-            }else if(element.getLevel().equals("L")){
+            } else if (element.getLevel().equals("L")) {
                 return false;
             }
         }
@@ -208,18 +208,23 @@ public class SyntaticAnalyzer {
     private void AnalyzeType() throws Exception {
         if (!listToken.get(i).getSimbol().equals(Symbols.SINTEIRO) && !listToken.get(i).getSimbol().equals(Symbols.SBOOLEANO)) {
             throw new Exception("[Error] -- tipo não esperado");
-        }else{
+        } else {
             PushTypeIntoTheTable(listToken.get(i).getLexema());
         }
         i++;
     }
 
     private void PushTypeIntoTheTable(String lexeme) throws Exception {
-        for(int i=0; i < symbolTable.size(); i++){
-            if(symbolTable.get(i).getType().equals(SymbolTableType.STVARIABLE))
-            {
-                symbolTable.get(i).setType(lexeme);
-            }else{
+        for (int i = 0; i < symbolTable.size(); i++) {
+            if (symbolTable.get(i).getType().equals(SymbolTableType.STVARIABLE)) {
+                if (lexeme.equals("inteiro")) {
+                    symbolTable.get(i).setType(Symbols.SINTEIRO);
+                } else if (lexeme.equals("booleano")) {
+                    symbolTable.get(i).setType(Symbols.SBOOLEANO);
+                } else {
+                    symbolTable.get(i).setType(lexeme);
+                }
+            } else {
                 break;
             }
         }
@@ -234,16 +239,16 @@ public class SyntaticAnalyzer {
             ExpressionAnalyzer();
             int finishExpression = i;
 
-            List<Token> sliceInFixed = listToken.subList(initExpression,finishExpression);
+            List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
 
-            inFixedList.forEach(element->{
-                sliceInFixed.get(element.getPosition()-initExpression).setLexema(element.getLexema());
-                sliceInFixed.get(element.getPosition()-initExpression).setSimbol(element.getSimbol());
+            inFixedList.forEach(element -> {
+                sliceInFixed.get(element.getPosition() - initExpression).setLexema(element.getLexema());
+                sliceInFixed.get(element.getPosition() - initExpression).setSimbol(element.getSimbol());
             });
 
-            new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
-
-            System.out.println("\n");
+            List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+            String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
+            System.out.println("returnExitExpretion:"+returnExitExpretion);
             //TODO: CHAMADA POS FIXO
         } else {
             //Chamada Procedimento
@@ -304,16 +309,16 @@ public class SyntaticAnalyzer {
         ExpressionAnalyzer();
         int finishExpression = i;
 
-        List<Token> sliceInFixed = listToken.subList(initExpression,finishExpression);
+        List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
 
-        inFixedList.forEach(element->{
-            sliceInFixed.get(element.getPosition()-initExpression).setLexema(element.getLexema());
-            sliceInFixed.get(element.getPosition()-initExpression).setSimbol(element.getSimbol());
+        inFixedList.forEach(element -> {
+            sliceInFixed.get(element.getPosition() - initExpression).setLexema(element.getLexema());
+            sliceInFixed.get(element.getPosition() - initExpression).setSimbol(element.getSimbol());
         });
 
-        new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
-
-        System.out.println("\n");
+        List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+        String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
+        System.out.println("returnExitExpretion:"+returnExitExpretion);
         //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SFACA)) {
             i++;
@@ -330,16 +335,16 @@ public class SyntaticAnalyzer {
         ExpressionAnalyzer();
         int finishExpression = i;
 
-        List<Token> sliceInFixed = listToken.subList(initExpression,finishExpression);
+        List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
 
-        inFixedList.forEach(element->{
-            sliceInFixed.get(element.getPosition()-initExpression).setLexema(element.getLexema());
-            sliceInFixed.get(element.getPosition()-initExpression).setSimbol(element.getSimbol());
+        inFixedList.forEach(element -> {
+            sliceInFixed.get(element.getPosition() - initExpression).setLexema(element.getLexema());
+            sliceInFixed.get(element.getPosition() - initExpression).setSimbol(element.getSimbol());
         });
 
-        new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
-
-        System.out.println("\n");
+        List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+        String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
+        System.out.println("returnExitExpretion:"+returnExitExpretion);
 
         //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
@@ -380,7 +385,6 @@ public class SyntaticAnalyzer {
     private void ProcedureDeclarationAnalyzer() throws Exception {
         i++;
         level = "L";
-
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
 
             if (!SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
@@ -459,11 +463,11 @@ public class SyntaticAnalyzer {
 
     private void SimpleExpressionAnalyzer() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SMAIS) || listToken.get(i).getSimbol().equals(Symbols.SMENOS)) {
-            if(listToken.get(i).getSimbol().equals(Symbols.SMAIS)){
+            if (listToken.get(i).getSimbol().equals(Symbols.SMAIS)) {
                 SignalNumbers t = new SignalNumbers("+u", Symbols.SPOSITIVO, i);
                 inFixedList.add(t);
             }
-            if(listToken.get(i).getSimbol().equals(Symbols.SMENOS)){
+            if (listToken.get(i).getSimbol().equals(Symbols.SMENOS)) {
                 SignalNumbers t = new SignalNumbers("-u", Symbols.SNEGATIVO, i);
                 inFixedList.add(t);
             }
@@ -492,11 +496,11 @@ public class SyntaticAnalyzer {
         int index = 0;
         for (SymbolTable element : symbolTable) {
             index++;
-         //   if (element.getLevel().equals(level)) {
-                if (element.getLexeme().equals(lexeme)) {
-                    return index;
-                }
-           // }
+            //   if (element.getLevel().equals(level)) {
+            if (element.getLexeme().equals(lexeme)) {
+                return index;
+            }
+            // }
         }
         return -1;
     }

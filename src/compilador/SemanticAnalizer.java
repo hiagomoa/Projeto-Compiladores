@@ -9,34 +9,105 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SemanticAnalizer {
+    LinkedList<Token> stack = new LinkedList<Token>();
 
     public SemanticAnalizer() {
     }
 
-    public void semantic(List<Token> Exit, LinkedList<SymbolTable> symbolTable){
+    public String Semantic(List<Token> Exit, LinkedList<SymbolTable> symbolTable) {
+        int i = 0;
+        Token element;
+        String param1;
+        String param2;
 
-    }
-    private String analizeType(String param1,String param2, String operator){
-        if(operator.equals("+")||operator.equals("-")||operator.equals("*")||operator.equals("div")){
-            if(param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)){
-                return Symbols.SINTEIRO;
+        while (i < Exit.size()) {
+            element = Exit.get(i);
+            if (element.getSimbol().equals(Symbols.SNUMERO) || element.getSimbol().equals(Symbols.SIDENTIFICADOR)) {
+                stack.push(element);
+            } else if (analizeType(element).equals("OpArithmetic")) {
+                param1 = searchType(symbolTable, stack.pop());
+                param2 = searchType(symbolTable, stack.pop());
+                if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
+                    stack.push(new Token("", Symbols.SINTEIRO));
+                } else {
+                    //TODO: ERROR
+                }
+            } else if (analizeType(element).equals("OpArithmeticUnity")) {
+                param1 = searchType(symbolTable, stack.pop());
+                if (param1.equals(Symbols.SINTEIRO)) {
+                    stack.push(new Token("", Symbols.SINTEIRO));
+                } else {
+                    //TODO: ERROR
+                }
+            } else if (analizeType(element).equals("OpRelational")) {
+                param1 = searchType(symbolTable, stack.pop());
+                param2 = searchType(symbolTable, stack.pop());
+                if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
+                    stack.push(new Token("", Symbols.SBOOLEANO));
+                } else {
+                    //TODO: ERROR
+                }
+            } else if (analizeType(element).equals("OpLogic")) {
+                param1 = searchType(symbolTable, stack.pop());
+                param2 = searchType(symbolTable, stack.pop());
+                if (param1.equals(Symbols.SBOOLEANO) && param2.equals(Symbols.SBOOLEANO)) {
+                    stack.push(new Token("", Symbols.SBOOLEANO));
+                } else {
+                    //TODO: ERROR
+                }
+            } else if (analizeType(element).equals("OpLogicUnity")) {
+                param1 = searchType(symbolTable, stack.pop());
+                if (param1.equals(Symbols.SBOOLEANO)) {
+                    stack.push(new Token("", Symbols.SBOOLEANO));
+                } else {
+                    //TODO: ERROR
+                }
             }
+            i++;
         }
 
-        if(operator.equals("u")){
-            if(param1.equals(Symbols.SINTEIRO))
-                return  Symbols.SINTEIRO;
+        Token lastElement = stack.pop();
+        if (lastElement.getSimbol().equals(Symbols.SNUMERO)) {
+            return Symbols.SINTEIRO;
+        } else return lastElement.getSimbol();
+    }
+
+    private String analizeType(Token operator) {
+        if (operator.getSimbol().equals(Symbols.SMAIS) || operator.getSimbol().equals(Symbols.SMENOS) ||
+                operator.getSimbol().equals(Symbols.SMULT) || operator.getSimbol().equals(Symbols.SDIV)) {
+            return "OpArithmetic";
         }
-
-
+        if (operator.getSimbol().equals(Symbols.SPOSITIVO) || operator.getSimbol().equals(Symbols.SNEGATIVO)) {
+            return "OpArithmeticUnity";
+        }
+        if (operator.getSimbol().equals(Symbols.SMAIOR) || operator.getSimbol().equals(Symbols.SMENOR) ||
+                operator.getSimbol().equals(Symbols.SMAIORIG) || operator.getSimbol().equals(Symbols.SMENORIG) ||
+                operator.getSimbol().equals(Symbols.SDIF)) {
+            return "OpRelational";
+        }
+        if (operator.getSimbol().equals(Symbols.SE) || operator.getSimbol().equals(Symbols.SOU)) {
+            return "OpLogic";
+        }
+        if (operator.getSimbol().equals(Symbols.SNAO)) {//TODO: COLOCAR ISSO NA CONVERSÃO POS FIXA
+            return "OpLogicUnity";
+        }
         return "i";
     }
-    private String searchType(LinkedList<SymbolTable> symbolTable, Token element){
-        int i=0;
-        while(symbolTable.size()>i) {
-            if(symbolTable.get(i).equals(element.getLexema())){
+
+    private String searchType(LinkedList<SymbolTable> symbolTable, Token element) {
+        int i = 0;
+
+        if (element.getSimbol().equals(Symbols.SINTEIRO) || element.getSimbol().equals(Symbols.SNUMERO)) {
+            return Symbols.SINTEIRO;
+        }
+        if (element.getSimbol().equals(Symbols.SBOOLEANO)) {
+            return Symbols.SBOOLEANO;
+        }
+        while (symbolTable.size() > i) {
+            if (symbolTable.get(i).getLexeme().equals(element.getLexema())) {
                 return symbolTable.get(i).getType();
             }
+            i++;
         }
         return "";
     }

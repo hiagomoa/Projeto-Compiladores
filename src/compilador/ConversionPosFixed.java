@@ -11,7 +11,7 @@ public class ConversionPosFixed {
     public ConversionPosFixed() {
     }
 
-    public void InFixedToPosFixed(List<Token> expr) {
+    public List<Token> InFixedToPosFixed(List<Token> expr) {
         int i = 0;
         List<Token> Exit = new ArrayList<Token>();
         Token currentValue;
@@ -26,11 +26,9 @@ public class ConversionPosFixed {
             if (currentValue.getSimbol().equals(Symbols.SIDENTIFICADOR) || currentValue.getSimbol().equals(Symbols.SNUMERO)) {
                 Exit.add(currentValue);
                 System.out.println(currentValue.getLexema());
-            }
-            else if (currentValue.getSimbol().equals(Symbols.SABRE_PARENTESES)) {
+            } else if (currentValue.getSimbol().equals(Symbols.SABRE_PARENTESES)) {
                 stack.push(currentValue);
-            }
-            else if (currentValue.getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
+            } else if (currentValue.getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                 do {
                     if (stack.peek().getSimbol().equals(Symbols.SABRE_PARENTESES)) {
                         //TODO: Error
@@ -38,18 +36,17 @@ public class ConversionPosFixed {
                     Exit.add(stack.pop());
                 } while (!stack.peek().getSimbol().equals(Symbols.SABRE_PARENTESES));
                 stack.pop();
-            }
-            else if (currentValue.getSimbol().equals(Symbols.SMAIS) || currentValue.getSimbol().equals(Symbols.SMENOS) ||
+            } else if (currentValue.getSimbol().equals(Symbols.SMAIS) || currentValue.getSimbol().equals(Symbols.SMENOS) ||
                     currentValue.getSimbol().equals(Symbols.SMULT) || currentValue.getSimbol().equals(Symbols.SDIV) ||
                     currentValue.getSimbol().equals(Symbols.SMAIOR) || currentValue.getSimbol().equals(Symbols.SMENOR) ||
                     currentValue.getSimbol().equals(Symbols.SMAIORIG) || currentValue.getSimbol().equals(Symbols.SMENORIG) ||
                     currentValue.getSimbol().equals(Symbols.SDIF) || currentValue.getSimbol().equals(Symbols.SE) ||
-                    currentValue.getSimbol().equals(Symbols.SOU)|| currentValue.getSimbol().equals(Symbols.SPOSITIVO) ||
+                    currentValue.getSimbol().equals(Symbols.SOU) || currentValue.getSimbol().equals(Symbols.SPOSITIVO) ||
                     currentValue.getSimbol().equals(Symbols.SNEGATIVO)
             ) {
                 while (true) {
-                    if(!stack.isEmpty()) {
-                        if(Priority(currentValue, stack.peek())) {
+                    if (!stack.isEmpty()) {
+                        if (Priority(currentValue, stack.peek())) {
                             stack.push(currentValue);
                             break;
                         } else {
@@ -57,32 +54,36 @@ public class ConversionPosFixed {
                             stack.push(currentValue);
                             break;
                         }
-                    }else{
+                    } else {
                         stack.push(currentValue);
                         break;
                     }
                 }
             }
-        } while (expr.size()>i);
-        while(!stack.isEmpty()){
+        } while (expr.size() > i);
+        while (!stack.isEmpty()) {
             Exit.add(stack.pop());
         }
 
         System.out.println("INICIO");
-        Exit.forEach(a->{
+        Exit.forEach(a -> {
             System.out.println(a.getLexema());
         });
         System.out.println("FIM");
+
+        return Exit;
     }
 
     private boolean Priority(Token current, Token top) {
         int pc = 0, pt = 0;
 
-        if (current.getSimbol().equals(Symbols.SDIF) )
-            pc = 8;
+        if (current.getSimbol().equals(Symbols.SDIF))
+            pc = 9;
         else if (current.getSimbol().equals(Symbols.SE))
+            pc = 8;
+        else if (current.getSimbol().equals(Symbols.SOU))
             pc = 7;
-        else if(current.getSimbol().equals(Symbols.SOU))
+        else if (current.getSimbol().equals(Symbols.SNAO))
             pc = 6;
         else if (current.getSimbol().equals(Symbols.SMAIOR) || current.getSimbol().equals(Symbols.SMENOR) ||
                 current.getSimbol().equals(Symbols.SMAIORIG) || current.getSimbol().equals(Symbols.SMENORIG))
@@ -93,15 +94,16 @@ public class ConversionPosFixed {
             pc = 3;
         else if (current.getSimbol().equals(Symbols.SMAIS) || current.getSimbol().equals(Symbols.SMENOS))
             pc = 2;
-        else if(current.getSimbol().equals(Symbols.SABRE_PARENTESES))
+        else if (current.getSimbol().equals(Symbols.SABRE_PARENTESES))
             pc = 0;
 
-
-        if (top.getSimbol().equals(Symbols.SDIF) )
+        if (current.getSimbol().equals(Symbols.SDIF))
+            pt = 9;
+        else if (current.getSimbol().equals(Symbols.SE))
             pt = 8;
-        else if (top.getSimbol().equals(Symbols.SE))
+        else if (current.getSimbol().equals(Symbols.SOU))
             pt = 7;
-        else if(top.getSimbol().equals(Symbols.SOU))
+        else if (current.getSimbol().equals(Symbols.SNAO))
             pt = 6;
         else if (top.getSimbol().equals(Symbols.SMAIOR) || top.getSimbol().equals(Symbols.SMENOR) ||
                 top.getSimbol().equals(Symbols.SMAIORIG) || top.getSimbol().equals(Symbols.SMENORIG))
@@ -112,7 +114,7 @@ public class ConversionPosFixed {
             pt = 3;
         else if (top.getSimbol().equals(Symbols.SMAIS) || top.getSimbol().equals(Symbols.SMENOS))
             pt = 2;
-        else if(top.getSimbol().equals(Symbols.SABRE_PARENTESES))
+        else if (top.getSimbol().equals(Symbols.SABRE_PARENTESES))
             pt = 0;
 
         return (pc > pt);
