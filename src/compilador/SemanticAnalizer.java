@@ -10,6 +10,7 @@ import java.util.List;
 
 public class SemanticAnalizer {
     LinkedList<Token> stack = new LinkedList<Token>();
+    LinkedList<String> generatedCode = new LinkedList<String>();
 
     public SemanticAnalizer() {
     }
@@ -117,6 +118,11 @@ public class SemanticAnalizer {
             }
             i++;
         }
+        return "";
+    }
+
+
+    public String  GenerationCode(int label,String command,String auxLabel_1,String auxLabel_2){
         return "";
     }
 }

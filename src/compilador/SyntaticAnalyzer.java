@@ -19,13 +19,13 @@ public class SyntaticAnalyzer {
     LinkedList<SymbolTable> symbolTable = new LinkedList<SymbolTable>();
     LinkedList<SignalNumbers> inFixedList;
     String level;
-
+    SemanticAnalizer SemanticAnalizer = new SemanticAnalizer();
     public SyntaticAnalyzer(LinkedList<Token> data) throws Exception {
         this.listToken = data;
     }
 
     public void Syntatic() throws Exception {
-        label = 0;
+        label = 1;
 //        for (Token token : listToken) {
 //            System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
 //        }
@@ -308,14 +308,17 @@ public class SyntaticAnalyzer {
     }
 
     private void WhileAnalyzer() throws Exception {
+        int auxLabel_1 = label,auxLabel_2;
         i++;
         inFixedList = new LinkedList<SignalNumbers>();
         int initExpression = i;
         ExpressionAnalyzer();
         int finishExpression = i;
 
-        List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
+        SemanticAnalizer.GenerationCode(label,null,"     ","        ");//TODO: verificar isso aqui
+        label = label+1;
 
+        List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
         inFixedList.forEach(element -> {
             sliceInFixed.get(element.getPosition() - initExpression).setLexema(element.getLexema());
             sliceInFixed.get(element.getPosition() - initExpression).setSimbol(element.getSimbol());
