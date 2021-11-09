@@ -5,14 +5,19 @@ import Consts.Symbols;
 import compilador.models.SymbolTable;
 import compilador.models.Token;
 
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class SemanticAnalizer {
     LinkedList<Token> stack = new LinkedList<Token>();
     LinkedList<String> generatedCode = new LinkedList<String>();
+    FileWriter file;
+    PrintWriter writer;
 
-    public SemanticAnalizer() {
+    public SemanticAnalizer() throws IOException {
+        file = new FileWriter("./Commanders.txt");
+        writer = new PrintWriter(file);
     }
 
     public String Semantic(List<Token> Exit, LinkedList<SymbolTable> symbolTable) {
@@ -72,7 +77,7 @@ public class SemanticAnalizer {
             i++;
         }
 
-        while(!stack.isEmpty()) {
+        while (!stack.isEmpty()) {
             Token lastElement = stack.pop();
             if (lastElement.getSimbol().equals(Symbols.SNUMERO)) {
                 return Symbols.SINTEIRO;
@@ -121,8 +126,18 @@ public class SemanticAnalizer {
         return "";
     }
 
+    public void GenerationCode(String label_1, String label_2, String label_3, String label_4) throws IOException {
+        writer.println(CompleteWithSpaces(label_1) + CompleteWithSpaces(label_2) + CompleteWithSpaces(label_3) + CompleteWithSpaces(label_4));
+    }
 
-    public String  GenerationCode(int label,String command,String auxLabel_1,String auxLabel_2){
-        return "";
+    private String CompleteWithSpaces(String label) {
+        while (label.length() < 8) {
+            label += " ";
+        }
+        return label;
+    }
+
+    public void CloseFile() throws IOException {
+        file.close();
     }
 }

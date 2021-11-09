@@ -20,15 +20,14 @@ public class SyntaticAnalyzer {
     LinkedList<SignalNumbers> inFixedList;
     String level;
     SemanticAnalizer SemanticAnalizer = new SemanticAnalizer();
+
     public SyntaticAnalyzer(LinkedList<Token> data) throws Exception {
         this.listToken = data;
     }
 
     public void Syntatic() throws Exception {
         label = 1;
-//        for (Token token : listToken) {
-//            System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
-//        }
+
         for (i = 0; i < listToken.size(); i++) {
             if (listToken.get(i).getSimbol().equals(Symbols.SPROGRAMA)) {
                 i++;//LEXICO(TOKEN)
@@ -55,6 +54,7 @@ public class SyntaticAnalyzer {
         for (SymbolTable element : symbolTable) {
             System.out.println(element.getLevel() + " " + element.getLexeme() + " " + element.getType());
         }
+        SemanticAnalizer.CloseFile();
     }
 
     private void Unstack() throws Exception {
@@ -120,7 +120,6 @@ public class SyntaticAnalyzer {
         AnalyzeVariablesDeclaration();
         AnalyzeSubRoutine();
         AnalyzeCommands();
-
     }
 
     private void AnalyzeCommands() throws Exception {
@@ -249,11 +248,11 @@ public class SyntaticAnalyzer {
             List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
             String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
 
-            if(!returnExitExpretion.equals(listToken.get(i-2).getSimbol())){
+            if (!returnExitExpretion.equals(listToken.get(i - 2).getSimbol())) {
                 System.out.println("ERROR DE ATTRIBUIÇÃO");
                 //TODO: ERROR
             }
-            System.out.println("returnExitExpretion:"+returnExitExpretion);
+            System.out.println("returnExitExpretion:" + returnExitExpretion);
             //TODO: CHAMADA POS FIXO
         } else {
             //Chamada Procedimento
@@ -308,15 +307,15 @@ public class SyntaticAnalyzer {
     }
 
     private void WhileAnalyzer() throws Exception {
-        int auxLabel_1 = label,auxLabel_2;
+        int auxLabel_1 = label, auxLabel_2;
         i++;
         inFixedList = new LinkedList<SignalNumbers>();
         int initExpression = i;
         ExpressionAnalyzer();
         int finishExpression = i;
 
-        SemanticAnalizer.GenerationCode(label,null,"     ","        ");//TODO: verificar isso aqui
-        label = label+1;
+        SemanticAnalizer.GenerationCode(String.format("%d", label), "null", "", "");
+        label = label + 1;
 
         List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
         inFixedList.forEach(element -> {
@@ -326,15 +325,20 @@ public class SyntaticAnalyzer {
 
         List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
-        System.out.println("returnExitExpretion:"+returnExitExpretion);
-        if(!returnExitExpretion.equals(Symbols.SBOOLEANO)){
+        System.out.println("returnExitExpretion:" + returnExitExpretion);
+        if (!returnExitExpretion.equals(Symbols.SBOOLEANO)) {
             System.out.println("ERROR");
             //TODO:ERROR
         }
         //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SFACA)) {
+            auxLabel_2 = label;
+            SemanticAnalizer.GenerationCode("", "JMPF", String.format("%d", label), "");
+            label = label + 1;
             i++;
             SimpleCommandAnalyser();
+            SemanticAnalizer.GenerationCode("", "JMP", String.format("%d", auxLabel_1), "");
+            SemanticAnalizer.GenerationCode(String.format("%d", auxLabel_2), "null", "", "");
         } else {
             throw new Exception("[Error] -- esperado uma palavra reservada faça");
         }
@@ -357,14 +361,13 @@ public class SyntaticAnalyzer {
         List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
 
-        System.out.println("returnExitExpretion:"+returnExitExpretion);
-        if(!returnExitExpretion.equals(Symbols.SBOOLEANO)){
+        System.out.println("returnExitExpretion:" + returnExitExpretion);
+        if (!returnExitExpretion.equals(Symbols.SBOOLEANO)) {
             System.out.println("ERROR");
             //TODO:ERROR
         }
 
-
-            //TODO: chama posfixo
+        //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
             i++;
             SimpleCommandAnalyser();
@@ -378,10 +381,15 @@ public class SyntaticAnalyzer {
     }
 
     private void AnalyzeSubRoutine() throws Exception {
-        int flag = 0;
-        if (listToken.get(i).getSimbol().equals(Symbols.SPROCEDIMENTO) || listToken.get(i).getSimbol().equals(Symbols.SFUNCAO)) {
+        Integer auxLabel = null, flag = 0;
 
+        if (listToken.get(i).getSimbol().equals(Symbols.SPROCEDIMENTO) || listToken.get(i).getSimbol().equals(Symbols.SFUNCAO)) {
+            auxLabel = label;
+            SemanticAnalizer.GenerationCode("", "JMP", String.format("%d", label), "");
+            label = label + 1;
+            flag = 1;
         }
+
         while (listToken.get(i).getSimbol().equals(Symbols.SPROCEDIMENTO) || listToken.get(i).getSimbol().equals(Symbols.SFUNCAO)) {
             if (listToken.get(i).getSimbol().equals(Symbols.SPROCEDIMENTO)) {
                 ProcedureDeclarationAnalyzer();
@@ -395,7 +403,7 @@ public class SyntaticAnalyzer {
             }
         }
         if (flag == 1) {
-            //Gera
+            SemanticAnalizer.GenerationCode(String.format("%d", auxLabel), "null","", "");
         }
 
     }
@@ -406,7 +414,9 @@ public class SyntaticAnalyzer {
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
 
             if (!SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
-                InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROCEDURE, level, 0);//TODO: ajustar label
+                InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROCEDURE, level, label);
+                SemanticAnalizer.GenerationCode(String.format("%d", label), "null","", "");
+                label++;
                 i++;
                 if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
                     BlockAnalyzer();
@@ -416,7 +426,6 @@ public class SyntaticAnalyzer {
             } else {
                 throw new Exception("[Error] -- 3");
             }
-
 
         } else {
             throw new Exception("[Error] -- esperado um identificador");
@@ -431,7 +440,9 @@ public class SyntaticAnalyzer {
         level = "L";
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
             if (!SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
-                InsertTable(listToken.get(i).getLexema(), "", level, 0);//TODO: veriricar label
+                InsertTable(listToken.get(i).getLexema(), "", level, label);
+                SemanticAnalizer.GenerationCode(String.format("%d", label), "null","", "");
+                label++;
                 i++;
                 if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
                     i++;
