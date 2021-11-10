@@ -8,6 +8,7 @@ import compilador.models.Token;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class SemanticAnalizer {
     LinkedList<Token> stack = new LinkedList<Token>();
@@ -139,5 +140,13 @@ public class SemanticAnalizer {
 
     public void CloseFile() throws IOException {
         file.close();
+    }
+
+    public String FindLabel(LinkedList<SymbolTable> symbolTables, String lexeme){
+        Optional<SymbolTable> a = symbolTables.stream().filter(element->element.getLexeme().equals(lexeme)).findFirst();
+        if(a.isPresent()){
+            return  String.format("%d",a.get().getLabel());
+        }
+        return "";
     }
 }
