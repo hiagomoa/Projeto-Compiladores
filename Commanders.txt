@@ -13,7 +13,7 @@
 4       null                    
         LDV     5               
         PRN                     
-        DALLOC  7       3       
+        DALLOC  4       3       
 5       null                    
         RD                      
         STR     2               
@@ -22,5 +22,6 @@
         PRN                     
         LDV     4               
         PRN                     
-        DALLOC  4       3       
+        DALLOC  1       3       
+        DALLOC  0       1       
         HLT                     

@@ -34,7 +34,7 @@ public class SyntaticAnalyzer {
             i++;//LEXICO(TOKEN)
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
                 InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROGRAMNAME, null, null);
-                SemanticAnalizer.GenerationCode("", "ALLOC", String.format("%d", variablesMemory),  String.format("%d", ++variablesMemory));
+                SemanticAnalizer.GenerationCode("", "ALLOC", String.format("%d", variablesMemory), String.format("%d", ++variablesMemory));
 
                 i++;//LEXICO(TOKEN)
                 if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
@@ -58,14 +58,14 @@ public class SyntaticAnalyzer {
         SymbolTable firstElement = symbolTable.peek();
         SymbolTable elementAux = symbolTable.peek();
         int flag = 0;
-       int size = symbolTable.size();//TODO: pq aqui precisa?
+        int size = symbolTable.size();//TODO: pq aqui precisa?
         for (int i = 0; i < size; i++) {
             if (symbolTable.peek().getLevel() == null) {
                 elementAux = symbolTable.pop();
-                if(elementAux.getType().equals(Symbols.SINTEIRO) || elementAux.getType().equals(Symbols.SBOOLEANO) || elementAux.getType().equals(Symbols.SVAR)) {
-                    if(flag==0){
-                        firstElement= elementAux;
-                        flag=1;
+                if (elementAux.getType().equals(Symbols.SINTEIRO) || elementAux.getType().equals(Symbols.SBOOLEANO) || elementAux.getType().equals(Symbols.SVAR)) {
+                    if (flag == 0) {
+                        firstElement = elementAux;
+                        flag = 1;
                     }
                     countVariable++;
                 }
@@ -76,10 +76,11 @@ public class SyntaticAnalyzer {
                 break;
             }
         }
-        if(countVariable>0) {
-            SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", firstElement.getLabel()), String.format("%d", countVariable));
+        if (countVariable > 0) {
+            variablesMemory = variablesMemory - countVariable;
+            SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", variablesMemory), String.format("%d", countVariable));
         }
-
+        SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", variablesMemory-1), "1");
         SemanticAnalizer.GenerationCode("", "HLT", "", "");//TODO: TALVEZ SEJA DENTRO
         for (SymbolTable element : symbolTable) {
             System.out.println(element.getLevel() + " " + element.getLexeme() + " " + element.getType());
@@ -87,22 +88,16 @@ public class SyntaticAnalyzer {
         SemanticAnalizer.CloseFile();
     }
 
-    private void Unstack() throws Exception {
+    private void Unstack() throws Exception {//TODO: TA ERRADO TEM Q SER SALVAR PRA VOLTAR NO ALLOC
         int countVariable = 0;
         SymbolTable element = symbolTable.peek();
-        SymbolTable firstElement = symbolTable.peek();
-        int flag = 0;
         //int size = symbolTable.size();
         for (int i = 0; i < symbolTable.size(); i++) {
             if (symbolTable.peek().getLevel() == null) {
-                    element = symbolTable.pop();
-                    if(element.getType().equals(Symbols.SINTEIRO) || element.getType().equals(Symbols.SBOOLEANO) || element.getType().equals(Symbols.SVAR)) {
-                        if(flag==0){
-                            firstElement= element;
-                            flag=1;
-                        }
-                        countVariable++;
-                    }
+                element = symbolTable.pop();
+                if (element.getType().equals(Symbols.SINTEIRO) || element.getType().equals(Symbols.SBOOLEANO) || element.getType().equals(Symbols.SVAR)) {
+                    countVariable++;
+                }
             } else {
                 if (symbolTable.peek().getType().equals("procedimento")) {
                     symbolTable.peek().setLevel(null);
@@ -110,10 +105,10 @@ public class SyntaticAnalyzer {
                 break;
             }
         }
-        if(countVariable>0) {
-            SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", firstElement.getLabel()), String.format("%d", countVariable));
+        if (countVariable > 0) {
+            variablesMemory = variablesMemory - countVariable;
+            SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", variablesMemory), String.format("%d", countVariable));
         }
-
     }
 
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
@@ -231,7 +226,7 @@ public class SyntaticAnalyzer {
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
                 boolean isDuplicated = SearchDuplicatedVarInTable(listToken.get(i).getLexema());
                 if (!isDuplicated) {
-                    InsertTable(listToken.get(i).getLexema(), SymbolTableType.STVARIABLE, null,  ++variablesMemory );
+                    InsertTable(listToken.get(i).getLexema(), SymbolTableType.STVARIABLE, null, ++variablesMemory);
                     i++;
                     if (listToken.get(i).getSimbol().equals(Symbols.SVIRGULA) || listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
                         if (listToken.get(i).getSimbol().equals(Symbols.SVIRGULA)) {
@@ -462,7 +457,7 @@ public class SyntaticAnalyzer {
             }
         }
         if (flag == 1) {
-            SemanticAnalizer.GenerationCode(String.format("%d", auxLabel), "null","", "");
+            SemanticAnalizer.GenerationCode(String.format("%d", auxLabel), "null", "", "");
         }
 
     }
@@ -474,7 +469,7 @@ public class SyntaticAnalyzer {
 
             if (!SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
                 InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROCEDURE, level, label);
-                SemanticAnalizer.GenerationCode(String.format("%d", label), "null","", "");
+                SemanticAnalizer.GenerationCode(String.format("%d", label), "null", "", "");
                 label++;
                 i++;
                 if (listToken.get(i).getSimbol().equals(Symbols.SPONTO_VIRGULA)) {
@@ -500,7 +495,7 @@ public class SyntaticAnalyzer {
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
             if (!SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
                 InsertTable(listToken.get(i).getLexema(), "", level, label);
-                SemanticAnalizer.GenerationCode(String.format("%d", label), "null","", "");
+                SemanticAnalizer.GenerationCode(String.format("%d", label), "null", "", "");
                 label++;
                 i++;
                 if (listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS)) {
