@@ -97,7 +97,7 @@ public class SemanticAnalizer {
         }
         if (operator.getSimbol().equals(Symbols.SMAIOR) || operator.getSimbol().equals(Symbols.SMENOR) ||
                 operator.getSimbol().equals(Symbols.SMAIORIG) || operator.getSimbol().equals(Symbols.SMENORIG) ||
-                operator.getSimbol().equals(Symbols.SDIF)) {
+                operator.getSimbol().equals(Symbols.SDIF)||operator.getSimbol().equals(Symbols.SIG)) {
             return "OpRelational";
         }
         if (operator.getSimbol().equals(Symbols.SE) || operator.getSimbol().equals(Symbols.SOU)) {
