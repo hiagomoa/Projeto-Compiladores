@@ -11,7 +11,7 @@ x:= 0;
 leia(z);
 enquanto (a != 89) e (a<= 1000)  {condicao de parada}
 faca inicio
-a:= x+z
+a:= x+a
 fim;
 escreva(a)
 fim;

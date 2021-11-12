@@ -82,7 +82,12 @@ public class SemanticAnalizer {
             Token lastElement = stack.pop();
             if (lastElement.getSimbol().equals(Symbols.SNUMERO)) {
                 return Symbols.SINTEIRO;
-            } else return lastElement.getSimbol();
+            } else{
+                if(lastElement.getLexema().equals("")){
+                    return lastElement.getSimbol();
+                }
+                return verifyType(symbolTable, lastElement);
+            }
         }
         return "";
     }
@@ -125,6 +130,20 @@ public class SemanticAnalizer {
             i++;
         }
         return "";
+    }
+
+    private String verifyType(LinkedList<SymbolTable> symbolTable, Token element){
+        for(SymbolTable value: symbolTable){
+            if(value.getLexeme().equals(element.getLexema())){
+                if(value.getType().contains("inteiro")){
+                    return Symbols.SINTEIRO;
+                }
+                if(value.getType().contains("inteiro")){
+                    return Symbols.SBOOLEANO;
+                }
+            }
+        }
+        return null;
     }
 
     public void GenerationCode(String label_1, String label_2, String label_3, String label_4) throws IOException {

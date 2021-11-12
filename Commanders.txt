@@ -24,7 +24,9 @@
         LDV     8               
         LDC     10              
         CME                     
+        JPMF    6               
         CALL    4               
+6       NULL                    
         DALLOC  8       1       
         RETURN                  
 3       NULL                    
@@ -32,7 +34,7 @@
         LDV     4               
         LDV     5               
         ADD                     
-        STR     4               
+        STR     0               
         DALLOC  4       4       
         RETURN                  
 1       NULL                    

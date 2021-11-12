@@ -287,13 +287,26 @@ public class SyntaticAnalyzer {
             });
 
             List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
-            String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
-            if (!returnExitExpretion.equals(symbolTable.get(searchTable(listToken.get(i - 3).getLexema(), null)).getType())) {
-                System.out.println("ERROR DE ATTRIBUIÇÃO");
-                //TODO: ERROR
-            }
+            String returnExitExpression = new SemanticAnalizer().Semantic(Exit, symbolTable);
+
+            String lexemaOnPosition = listToken.get(initExpression - 2).getLexema();
+            int positionOnTableVariable = searchTableVariable(lexemaOnPosition);
             ScrollExpressionToGenerationCode(Exit);
-            SemanticAnalizer.GenerationCode("", "STR", SemanticAnalizer.FindLabel(symbolTable, listToken.get(i - 3).getLexema()), "");
+            if(positionOnTableVariable==-1){
+                int positionOnTableFunction = searchTableFunction(lexemaOnPosition);
+                if(positionOnTableFunction!=-1){
+                    SemanticAnalizer.GenerationCode("", "STR", "0", "");
+                }else{
+                    System.out.println("ERRO DE ATRIBUIÇÃO");
+                }
+            }else{
+                if (!returnExitExpression.equals(symbolTable.get(positionOnTableVariable).getType())) {
+                    System.out.println("ERROR DE ATTRIBUIÇÃO");
+                    //TODO: ERROR
+                }
+               // ScrollExpressionToGenerationCode(Exit);
+                SemanticAnalizer.GenerationCode("", "STR", SemanticAnalizer.FindLabel(symbolTable, listToken.get(initExpression - 2).getLexema()), "");
+            }
         } else {
             //Chamada Procedimento
             SemanticAnalizer.GenerationCode("", "CALL", SemanticAnalizer.FindLabel(symbolTable, listToken.get(i - 1).getLexema()), "");
@@ -416,9 +429,10 @@ public class SyntaticAnalyzer {
             System.out.println("ERROR");
             //TODO:ERROR
         }
-
+        //int auxLabel = label++;
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
             i++;
+            SemanticAnalizer.GenerationCode("", "JPMF",  String.format("%d",label), "");
             SimpleCommandAnalyser();
             if (listToken.get(i).getSimbol().equals(Symbols.SSENAO)) {
                 i++;
@@ -427,6 +441,7 @@ public class SyntaticAnalyzer {
         } else {
             throw new Exception("[ERROR] Esperado \"então\"");
         }
+        SemanticAnalizer.GenerationCode( String.format("%d",label), "NULL", "", "");//TODO VERIFICAR ESSE NULL tem q adicionar
     }
 
     private void ScrollExpressionToGenerationCode(List<Token> list) {
@@ -644,6 +659,33 @@ public class SyntaticAnalyzer {
                 return index;
             }
             // }
+        }
+        return -1;
+    }
+
+    private int searchTableVariable(String lexeme) {
+        int index = 0;
+        for (SymbolTable element : symbolTable) {
+            index++;
+            if (element.getLexeme().equals(lexeme)) {
+                if(element.getType().equals(Symbols.SINTEIRO)||element.getType().equals(Symbols.SBOOLEANO)) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int searchTableFunction(String lexeme) {
+        int index = 0;
+        for (SymbolTable element : symbolTable) {
+            index++;
+            if (element.getLexeme().equals(lexeme)) {
+                if(element.getType().equals(SymbolTableType.STBOOLFUNCTION)||element.getType().equals(SymbolTableType.STINTFUNCTION)) {
+                    return index;
+                }
+            }
+
         }
         return -1;
     }
