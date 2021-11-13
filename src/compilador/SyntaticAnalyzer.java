@@ -305,7 +305,13 @@ public class SyntaticAnalyzer {
                     //TODO: ERROR
                 }
                // ScrollExpressionToGenerationCode(Exit);
-                SemanticAnalizer.GenerationCode("", "STR", SemanticAnalizer.FindLabel(symbolTable, listToken.get(initExpression - 2).getLexema()), "");
+                Token tokenCurrent = listToken.get(initExpression - 2);
+                int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
+                if(symbolTable.get(positionCurrent-1).getType().equals(Symbols.SBOOLEANO)){
+                    throw new Exception("[Error] -- Não é possivel salvar um booleano");
+                }else{
+                    SemanticAnalizer.GenerationCode("", "STR", SemanticAnalizer.FindLabel(symbolTable, tokenCurrent.getLexema()), "");
+                }
             }
         } else {
             //Chamada Procedimento
@@ -321,8 +327,14 @@ public class SyntaticAnalyzer {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
                 if (SearchDeclarationVariableOnTable(listToken.get(i).getLexema())) {
-                    String labelFinded = SemanticAnalizer.FindLabel(symbolTable, listToken.get(i).getLexema());
-                    SemanticAnalizer.GenerationCode("", "STR", labelFinded, "");
+                    Token tokenCurrent = listToken.get(i);
+                    String labelFinded = SemanticAnalizer.FindLabel(symbolTable, tokenCurrent.getLexema());
+                    int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
+                    if(symbolTable.get(positionCurrent-1).getType().equals(Symbols.SBOOLEANO)){
+                        throw new Exception("[Error] -- Não é possivel salvar um booleano");
+                    }else{
+                        SemanticAnalizer.GenerationCode("", "STR", labelFinded, "");
+                    }
                     i++;
                     if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                         i++;
@@ -347,9 +359,17 @@ public class SyntaticAnalyzer {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
                 if (SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
-                    String labelFinded = SemanticAnalizer.FindLabel(symbolTable, listToken.get(i).getLexema());
-                    SemanticAnalizer.GenerationCode("", "LDV", labelFinded, "");
-                    SemanticAnalizer.GenerationCode("", "PRN", "", "");
+                    Token tokenCurrent = listToken.get(i);
+                    String labelFinded = SemanticAnalizer.FindLabel(symbolTable, tokenCurrent.getLexema());
+                    int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
+
+                    if(symbolTable.get(positionCurrent-1).getType().equals(Symbols.SBOOLEANO)){
+                        throw new Exception("[Error] -- Não é possivel printar um booleano");
+                    }else{
+                        SemanticAnalizer.GenerationCode("", "LDV", labelFinded, "");
+                        SemanticAnalizer.GenerationCode("", "PRN", "", "");
+                    }
+
                     i++;
                     if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                         i++;
@@ -377,6 +397,7 @@ public class SyntaticAnalyzer {
 
         SemanticAnalizer.GenerationCode(String.format("%d", label), "NULL", "", "");
         label = label + 1;
+
 
         List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
         inFixedList.forEach(element -> {
@@ -429,19 +450,24 @@ public class SyntaticAnalyzer {
             System.out.println("ERROR");
             //TODO:ERROR
         }
-        //int auxLabel = label++;
+        int falseLabel = label, finalLabel = label;
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
             i++;
-            SemanticAnalizer.GenerationCode("", "JPMF",  String.format("%d",label), "");
+            SemanticAnalizer.GenerationCode("", "JMPF",  String.format("%d", falseLabel), "");
+            label++;
             SimpleCommandAnalyser();
             if (listToken.get(i).getSimbol().equals(Symbols.SSENAO)) {
+                finalLabel = label;
+                SemanticAnalizer.GenerationCode("", "JMP",  String.format("%d", finalLabel), "");
+                label++;
                 i++;
+                SemanticAnalizer.GenerationCode(String.format("%d", falseLabel), "NULL", "" , "");
                 SimpleCommandAnalyser();
             }
         } else {
             throw new Exception("[ERROR] Esperado \"então\"");
         }
-        SemanticAnalizer.GenerationCode( String.format("%d",label), "NULL", "", "");//TODO VERIFICAR ESSE NULL tem q adicionar
+        SemanticAnalizer.GenerationCode( String.format("%d",finalLabel), "NULL", "", "");//TODO VERIFICAR ESSE NULL tem q adicionar
     }
 
     private void ScrollExpressionToGenerationCode(List<Token> list) {
