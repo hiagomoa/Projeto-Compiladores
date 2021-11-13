@@ -297,13 +297,12 @@ public class SyntaticAnalyzer {
                 if(positionOnTableFunction!=-1){
                     SemanticAnalizer.GenerationCode("", "STR", "0", "");
                 }else{
-                    System.out.println("ERRO DE ATRIBUIÇÃO");
+                    throw new Exception("[Error] -- Erro de atribuição" );
                 }
             }else{
-                if (!returnExitExpression.equals(symbolTable.get(positionOnTableVariable).getType())) {
-                    System.out.println("ERROR DE ATTRIBUIÇÃO");
-                    //TODO: ERROR
-                }
+//                if (!returnExitExpression.equals(symbolTable.get(positionOnTableVariable).getType())) {
+//                    throw new Exception("[Error] -- Erro de atribuição");
+//                }
                // ScrollExpressionToGenerationCode(Exit);
                 Token tokenCurrent = listToken.get(initExpression - 2);
                 int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
