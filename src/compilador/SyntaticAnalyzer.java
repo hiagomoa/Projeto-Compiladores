@@ -172,7 +172,7 @@ public class SyntaticAnalyzer {
                         SimpleCommandAnalyser();
                     }
                 } else {
-                    throw new Exception("[Error] inesperado: " + listToken.get(i).getSimbol());
+                    throw new Exception("[Error] inesperado: " + listToken.get(i).getLexema());
                 }
             }
             i++;
@@ -306,14 +306,13 @@ public class SyntaticAnalyzer {
                // ScrollExpressionToGenerationCode(Exit);
                 Token tokenCurrent = listToken.get(initExpression - 2);
                 int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
-                if(symbolTable.get(positionCurrent-1).getType().equals(Symbols.SBOOLEANO)){
-                    throw new Exception("[Error] -- Não é possivel salvar um booleano");
+                if(!symbolTable.get(positionCurrent-1).getType().equals(returnExitExpression)){
+                    throw new Exception("[Error] -- Erro de atribuição");
                 }else{
                     SemanticAnalizer.GenerationCode("", "STR", SemanticAnalizer.FindLabel(symbolTable, tokenCurrent.getLexema()), "");
                 }
             }
         } else {
-            //Chamada Procedimento
             SemanticAnalizer.GenerationCode("", "CALL", SemanticAnalizer.FindLabel(symbolTable, listToken.get(i - 1).getLexema()), "");
         }
     }
@@ -466,7 +465,7 @@ public class SyntaticAnalyzer {
         } else {
             throw new Exception("[ERROR] Esperado \"então\"");
         }
-        SemanticAnalizer.GenerationCode( String.format("%d",finalLabel), "NULL", "", "");//TODO VERIFICAR ESSE NULL tem q adicionar
+        SemanticAnalizer.GenerationCode( String.format("%d",finalLabel), "NULL", "", "");
     }
 
     private void ScrollExpressionToGenerationCode(List<Token> list) {
@@ -740,7 +739,7 @@ public class SyntaticAnalyzer {
             } else {
                 throw new Exception("[Error] -- esperado um ) em vez de: " + listToken.get(i).getSimbol());
             }
-        } else if (listToken.get(i).getLexema().equals(true) || listToken.get(i).getLexema().equals(false)) {
+        } else if (listToken.get(i).getSimbol().equals(Symbols.SVERDADEIRO) || listToken.get(i).getSimbol().equals(Symbols.SFALSO)) {
             i++;
         } else {
             throw new Exception("[Error] -- token invalido: " + (listToken.get(i).getLexema()));

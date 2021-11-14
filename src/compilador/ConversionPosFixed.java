@@ -23,7 +23,7 @@ public class ConversionPosFixed {
         do {
             currentValue = expr.get(i);
             i++;
-            if (currentValue.getSimbol().equals(Symbols.SIDENTIFICADOR) || currentValue.getSimbol().equals(Symbols.SNUMERO)) {
+            if (currentValue.getSimbol().equals(Symbols.SIDENTIFICADOR) || currentValue.getSimbol().equals(Symbols.SNUMERO)||currentValue.getSimbol().equals(Symbols.SVERDADEIRO)||currentValue.getSimbol().equals(Symbols.SFALSO)) {
                 Exit.add(currentValue);
                 System.out.println(currentValue.getLexema());
             } else if (currentValue.getSimbol().equals(Symbols.SABRE_PARENTESES)) {

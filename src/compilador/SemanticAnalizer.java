@@ -29,7 +29,7 @@ public class SemanticAnalizer {
 
         while (i < Exit.size()) {
             element = Exit.get(i);
-            if (element.getSimbol().equals(Symbols.SNUMERO) || element.getSimbol().equals(Symbols.SIDENTIFICADOR)) {
+            if (element.getSimbol().equals(Symbols.SNUMERO) || element.getSimbol().equals(Symbols.SIDENTIFICADOR) || element.getSimbol().equals(Symbols.SVERDADEIRO)|| element.getSimbol().equals(Symbols.SFALSO)) {
                 stack.push(element);
             } else if (analizeType(element).equals("OpArithmetic")) {
                 param1 = searchType(symbolTable, stack.pop());
@@ -82,7 +82,9 @@ public class SemanticAnalizer {
             Token lastElement = stack.pop();
             if (lastElement.getSimbol().equals(Symbols.SNUMERO)) {
                 return Symbols.SINTEIRO;
-            } else{
+            } else if(lastElement.getSimbol().equals(Symbols.SVERDADEIRO)||lastElement.getSimbol().equals(Symbols.SFALSO)){
+                return Symbols.SBOOLEANO;
+            }else {
                 if(lastElement.getLexema().equals("")){
                     return lastElement.getSimbol();
                 }
@@ -138,7 +140,7 @@ public class SemanticAnalizer {
                 if(value.getType().contains("inteiro")){
                     return Symbols.SINTEIRO;
                 }
-                if(value.getType().contains("inteiro")){
+                if(value.getType().contains("booleano")){
                     return Symbols.SBOOLEANO;
                 }
             }
