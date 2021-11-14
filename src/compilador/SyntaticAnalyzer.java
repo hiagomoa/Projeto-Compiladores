@@ -303,7 +303,6 @@ public class SyntaticAnalyzer {
 //                if (!returnExitExpression.equals(symbolTable.get(positionOnTableVariable).getType())) {
 //                    throw new Exception("[Error] -- Erro de atribuição");
 //                }
-               // ScrollExpressionToGenerationCode(Exit);
                 Token tokenCurrent = listToken.get(initExpression - 2);
                 int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
                 if(!symbolTable.get(positionCurrent-1).getType().equals(returnExitExpression)){
@@ -483,6 +482,12 @@ public class SyntaticAnalyzer {
                             break;
                         }
                         SemanticAnalizer.GenerationCode("", "LDV", SemanticAnalizer.FindLabel(symbolTable, token.getLexema()), "");
+                        break;
+                    case Symbols.SVERDADEIRO:
+                        SemanticAnalizer.GenerationCode("", "LDC", "1", "");
+                        break;
+                    case Symbols.SFALSO:
+                        SemanticAnalizer.GenerationCode("", "LDC", "0", "");
                         break;
                     case Symbols.SMAIS:
                         SemanticAnalizer.GenerationCode("", "ADD", "", "");
@@ -745,5 +750,4 @@ public class SyntaticAnalyzer {
             throw new Exception("[Error] -- token invalido: " + (listToken.get(i).getLexema()));
         }
     }
-
 }

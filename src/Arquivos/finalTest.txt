@@ -1,27 +1,11 @@
-programa test;
-var a,b,s: inteiro;
-funcao soma: inteiro;
-var c,a,s: inteiro;
-z: booleano;
-procedimento ler;
+programa test1;
+var a,b,c: inteiro;
+        z: booleano;
+
+funcao ola: inteiro;
 inicio
-leia (c);
-leia (a);
-s:= soma;
-escreva (s);
+z:=falso
 fim;
-procedimento loop;
-var x: inteiro;
 inicio
-leia (x);   {para parar digite um valor maior que 9 }
-se x < 10
-entao ler;
-fim;
-inicio  {corpo da funcao soma}
-loop;
-soma:= c+a;
-fim;
-inicio      {corpo principal}
-s:= soma;
-escreva(s)
+    z:= ola = ola;
 fim.

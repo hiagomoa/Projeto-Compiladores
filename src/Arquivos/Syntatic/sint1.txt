@@ -3,10 +3,10 @@ programa test1;
 var a,b,c: inteiro;
 {proc 1}
 procedimento analisa1;
-var a, x: inteiro;
-z:booleano;
+var a, x, z: inteiro;
 inicio
 se x>1 entao
+x:= 0;
 leia(z);
 enquanto (a != 89) e (a<= 1000)  {condicao de parada}
 faca inicio

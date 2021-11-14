@@ -43,7 +43,8 @@ public class ConversionPosFixed {
                     currentValue.getSimbol().equals(Symbols.SMAIORIG) || currentValue.getSimbol().equals(Symbols.SMENORIG) ||
                     currentValue.getSimbol().equals(Symbols.SDIF) || currentValue.getSimbol().equals(Symbols.SE) ||
                     currentValue.getSimbol().equals(Symbols.SOU) || currentValue.getSimbol().equals(Symbols.SPOSITIVO) ||
-                    currentValue.getSimbol().equals(Symbols.SNEGATIVO) ||   currentValue.getSimbol().equals(Symbols.SNAO)
+                    currentValue.getSimbol().equals(Symbols.SNEGATIVO) ||   currentValue.getSimbol().equals(Symbols.SNAO)||
+                    currentValue.getSimbol().equals(Symbols.SIG)
             ) {
                 while (true) {
                     if (!stack.isEmpty()) {

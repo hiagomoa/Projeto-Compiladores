@@ -84,7 +84,7 @@ public class SemanticAnalizer {
                 return Symbols.SINTEIRO;
             } else if(lastElement.getSimbol().equals(Symbols.SVERDADEIRO)||lastElement.getSimbol().equals(Symbols.SFALSO)){
                 return Symbols.SBOOLEANO;
-            }else {
+             }else {
                 if(lastElement.getLexema().equals("")){
                     return lastElement.getSimbol();
                 }
@@ -125,8 +125,18 @@ public class SemanticAnalizer {
         if (element.getSimbol().equals(Symbols.SBOOLEANO)) {
             return Symbols.SBOOLEANO;
         }
+        if (element.getSimbol().equals(Symbols.SVERDADEIRO)||element.getSimbol().equals(Symbols.SFALSO)) {
+            return Symbols.SBOOLEANO;
+        }
+
         while (symbolTable.size() > i) {
             if (symbolTable.get(i).getLexeme().equals(element.getLexema())) {
+                if(symbolTable.get(i).getType().equals(SymbolTableType.STINTFUNCTION)){
+                    return Symbols.SINTEIRO;
+                }
+                if(symbolTable.get(i).getType().equals(SymbolTableType.STBOOLFUNCTION)){
+                    return Symbols.SBOOLEANO;
+                }
                 return symbolTable.get(i).getType();
             }
             i++;
