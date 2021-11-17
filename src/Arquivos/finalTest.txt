@@ -1,11 +1,18 @@
 programa test1;
 var a,b,c: inteiro;
         z: booleano;
-
-funcao ola: inteiro;
+funcao ola: booleano;
 inicio
-z:=falso
+z := falso
+fim;
+funcao hello: inteiro;
+inicio
+a := 2+1
 fim;
 inicio
-    z:= ola = ola;
+    z:=ola;
+    a:= hello;
+    c:=3+1;
+    escreva(a);
+    escreva(c)
 fim.

@@ -7,13 +7,27 @@
         LDC     0               
         STR     4               
         RETURN                  
+3       NULL                    
+        LDC     2               
+        LDC     1               
+        ADD                     
+        STR     1               
+        RETURN                  
 1       NULL                    
         CALL    2               
         LDV     0               
-        CALL    2               
-        LDV     0               
-        CEQ                     
         STR     4               
+        CALL    3               
+        LDV     0               
+        STR     1               
+        LDC     3               
+        LDC     1               
+        ADD                     
+        STR     3               
+        LDV     1               
+        PRN                     
+        LDV     3               
+        PRN                     
         DALLOC  1       4       
         DALLOC  0       1       
         HLT                     

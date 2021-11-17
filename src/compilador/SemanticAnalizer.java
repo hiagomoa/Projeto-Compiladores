@@ -84,11 +84,11 @@ public class SemanticAnalizer {
                 return Symbols.SINTEIRO;
             } else if(lastElement.getSimbol().equals(Symbols.SVERDADEIRO)||lastElement.getSimbol().equals(Symbols.SFALSO)){
                 return Symbols.SBOOLEANO;
-             }else {
+            }else {
                 if(lastElement.getLexema().equals("")){
                     return lastElement.getSimbol();
-                }
-                return verifyType(symbolTable, lastElement);
+            }
+            return verifyType(symbolTable, lastElement);
             }
         }
         return "";
@@ -152,6 +152,12 @@ public class SemanticAnalizer {
                 }
                 if(value.getType().contains("booleano")){
                     return Symbols.SBOOLEANO;
+                }
+                if(value.getType().contains(SymbolTableType.STBOOLFUNCTION)){
+                    return Symbols.SBOOLEANO;
+                }
+                if(value.getType().contains(SymbolTableType.STINTFUNCTION)){
+                    return Symbols.SINTEIRO;
                 }
             }
         }
