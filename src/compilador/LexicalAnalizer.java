@@ -15,6 +15,7 @@ public class LexicalAnalizer {
         this.data = data;
     }
 
+    //cria a lista ligada
     public LinkedList<Token> lexical() throws Exception {
         int length = data.length;
 
@@ -49,6 +50,9 @@ public class LexicalAnalizer {
         return listToken;
     }
 
+    //funcao responsavel por checar se o token lido se enquadra
+    //em qual categoria (digito, palavra, atribuição
+    //operador aritimetico e relacional ou pontuação)
     private void getToken() throws Exception {
         if (Character.isDigit(data[i])) {
             managerDigit();
@@ -77,6 +81,7 @@ public class LexicalAnalizer {
         throw new Exception("[Error] -- "+(line+1)+":"+(i-col)+"||=> "+ (char)data[i] + " é inválido!");
     }
 
+    //função responsavel salvar na lista o tipo do token como numero e o valor
     private void managerDigit() {
         String digit = new String();
         digit += (char) data[i];
@@ -89,6 +94,8 @@ public class LexicalAnalizer {
         listToken.add(new Token(digit, Symbols.SNUMERO));
     }
 
+    //Funcao responsavel por salvar na lista o tipo do token
+    //como simbolo  e passar o ID dela
     private void managerIdentifyAndReservedWord() {
         String id = new String();
         id += (char) data[i];
@@ -102,6 +109,7 @@ public class LexicalAnalizer {
         listToken.add(new Token(id, symbol));
     }
 
+    //insere na lista a atribuição 
     private void managerAttribution() {
         String operatorAttribution = new String();
         operatorAttribution += (char) data[i];
@@ -116,6 +124,7 @@ public class LexicalAnalizer {
         }
     }
 
+    //insere na lista o operador aritimetico 
     private void managerOperatorArithmetic() {
         String operatorArithmetic = new String();
         operatorArithmetic += (char) data[i];
@@ -133,6 +142,7 @@ public class LexicalAnalizer {
         }
     }
 
+    //insere na lista o operador relacional (!, !=, <, <=, >, >= ou =)
     private void managerRelationalOperator() throws Exception {
         String relationalOperator = new String();
         relationalOperator += (char) data[i];
@@ -174,6 +184,7 @@ public class LexicalAnalizer {
         }
     }
 
+    //insere na lista o token e o ID da pontuação
     private void managerPontuation() {
         String pontuation = new String();
         pontuation += (char) data[i];
@@ -199,6 +210,7 @@ public class LexicalAnalizer {
         }
     }
 
+    //Identifica o identificador e a palavra reservada.
     private String verifyIdentifyAndReservedWord(String id) {
         switch (id) {
             case "programa":
@@ -268,6 +280,4 @@ public class LexicalAnalizer {
                 return Symbols.SIDENTIFICADOR;
         }
     }
-
-
 }

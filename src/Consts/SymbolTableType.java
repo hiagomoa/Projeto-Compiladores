@@ -1,3 +1,4 @@
+//tabela contendo os tipos presentes no programa
 package Consts;
 
 public class SymbolTableType {

@@ -1,3 +1,4 @@
+//contem a tabela de simbolos do programa
 package Consts;
 
 import compilador.models.Token;
