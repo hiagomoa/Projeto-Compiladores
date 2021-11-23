@@ -19,7 +19,7 @@ public class SemanticAnalizer {
     PrintWriter writer;
 
     public SemanticAnalizer() throws IOException {
-        file = new FileWriter("./Commanders.txt");
+        file = new FileWriter("./Commanders.obj");
         writer = new PrintWriter(file);
     }
 

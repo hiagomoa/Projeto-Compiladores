@@ -2,10 +2,7 @@ package compilador;
 
 import compilador.models.Token;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -45,6 +42,13 @@ public class MainController {
         try{
             LinkedList<Token> listToken = new LexicalAnalizer(file).lexical();
             new SyntaticAnalyzer(listToken).Syntatic();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Informação do compilador");
+            alert.setHeaderText(null);
+            alert.setContentText("Código compilado com sucesso");
+
+            alert.showAndWait();
         }catch (Exception e){
             System.out.println("\n\n\n\nASDFGHJKLÇSDFGHJKLDFGHJKL\n");
             errorTextArea.appendText(e.getMessage());
