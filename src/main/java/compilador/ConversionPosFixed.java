@@ -11,7 +11,7 @@ public class ConversionPosFixed {
     public ConversionPosFixed() {
     }
 
-    public List<Token> InFixedToPosFixed(List<Token> expr) {
+    public List<Token> InFixedToPosFixed(List<Token> expr) throws Exception{
         int i = 0;
         List<Token> Exit = new ArrayList<Token>();
         Token currentValue;
@@ -32,7 +32,8 @@ public class ConversionPosFixed {
                 do {
                     if (stack.peek().getSimbol().equals(Symbols.SABRE_PARENTESES)) {
                         //TODO: ERROR
-                        System.out.println("ERRO ESPERADO ALGO AQUI N SEI AINDA");
+                        throw new Exception("[Error] -- Arquivo não terminou com erro");
+                        //System.out.println("ERRO ESPERADO ALGO AQUI N SEI AINDA");
                     }
                     Exit.add(stack.pop());
                 } while (!stack.peek().getSimbol().equals(Symbols.SABRE_PARENTESES));

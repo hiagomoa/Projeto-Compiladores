@@ -23,7 +23,7 @@ public class SemanticAnalizer {
         writer = new PrintWriter(file);
     }
 
-    public String Semantic(List<Token> Exit, LinkedList<SymbolTable> symbolTable) {
+    public String Semantic(List<Token> Exit, LinkedList<SymbolTable> symbolTable) throws Exception {
         int i = 0;
         Token element;
         String param1;
@@ -39,7 +39,8 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
-                    System.out.println("ERRO OPERAÇÃO ARITMETICA");
+                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    //System.out.println("ERRO OPERAÇÃO ARITMETICA");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpArithmeticUnity")) {
@@ -47,7 +48,8 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
-                    System.out.println("ERRO SINALIZAÇÃO");
+                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    //System.out.println("ERRO SINALIZAÇÃO");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpRelational")) {
@@ -56,7 +58,8 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
-                    System.out.println("ERRO OPERADOR RELACIONAL");
+                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    //System.out.println("ERRO OPERADOR RELACIONAL");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpLogic")) {
@@ -65,7 +68,8 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SBOOLEANO) && param2.equals(Symbols.SBOOLEANO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
-                    System.out.println("ERRO OPERADOR LOGICO");
+                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    //System.out.println("ERRO OPERADOR LOGICO");
                     //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpLogicUnity")) {
@@ -73,7 +77,8 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SBOOLEANO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
-                    System.out.println("ERRO OPERADOR LOGICO NÃO");
+                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    //System.out.println("ERRO OPERADOR LOGICO NÃO");
                     //TODO: ERROR
                 }
             }
