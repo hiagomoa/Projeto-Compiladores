@@ -39,7 +39,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
-                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    throw new Exception("[Error] -- Em operação Aritmetica");
                     //System.out.println("ERRO OPERAÇÃO ARITMETICA");
                     //TODO: ERROR
                 }
@@ -48,7 +48,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
-                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    throw new Exception("[Error] -- Em Sinalização");
                     //System.out.println("ERRO SINALIZAÇÃO");
                     //TODO: ERROR
                 }
@@ -58,7 +58,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SINTEIRO) && param2.equals(Symbols.SINTEIRO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
-                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    throw new Exception("[Error] -- No Operador Relacional");
                     //System.out.println("ERRO OPERADOR RELACIONAL");
                     //TODO: ERROR
                 }
@@ -68,7 +68,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SBOOLEANO) && param2.equals(Symbols.SBOOLEANO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
-                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    throw new Exception("[Error] -- No Operador Logico");
                     //System.out.println("ERRO OPERADOR LOGICO");
                     //TODO: ERROR
                 }
@@ -77,7 +77,7 @@ public class SemanticAnalizer {
                 if (param1.equals(Symbols.SBOOLEANO)) {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
-                    throw new Exception("[Error] -- Arquivo não terminou com erro");
+                    throw new Exception("[Error] -- No Operador Logico Não");
                     //System.out.println("ERRO OPERADOR LOGICO NÃO");
                     //TODO: ERROR
                 }
