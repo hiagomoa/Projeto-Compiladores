@@ -37,17 +37,17 @@ public class MainController  implements Initializable {
     @FXML
     public void onClickToCompile() throws IOException {
         byte[] file = new FileReaderCompiler().reader(fileTextField.getText()); //
-
         try{
             LinkedList<Token> listToken = new LexicalAnalizer(file).lexical();
             new SyntaticAnalyzer(listToken).Syntatic();
+            errorTextArea.setText("");
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Informação do compilador");
             alert.setHeaderText(null);
             alert.setContentText("Código compilado com sucesso");
             alert.showAndWait();
         }catch (Exception e){
-            errorTextArea.appendText(e.getMessage());
+            errorTextArea.setText(e.getMessage());
         }
     }
 

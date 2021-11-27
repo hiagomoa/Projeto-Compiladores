@@ -40,8 +40,6 @@ public class SemanticAnalizer {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
                     throw new Exception("[Error] -- Em operação Aritmetica");
-                    //System.out.println("ERRO OPERAÇÃO ARITMETICA");
-                    //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpArithmeticUnity")) {
                 param1 = searchType(symbolTable, stack.pop());
@@ -49,8 +47,6 @@ public class SemanticAnalizer {
                     stack.push(new Token("", Symbols.SINTEIRO));
                 } else {
                     throw new Exception("[Error] -- Em Sinalização");
-                    //System.out.println("ERRO SINALIZAÇÃO");
-                    //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpRelational")) {
                 param1 = searchType(symbolTable, stack.pop());
@@ -59,8 +55,6 @@ public class SemanticAnalizer {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
                     throw new Exception("[Error] -- No Operador Relacional");
-                    //System.out.println("ERRO OPERADOR RELACIONAL");
-                    //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpLogic")) {
                 param1 = searchType(symbolTable, stack.pop());
@@ -69,8 +63,6 @@ public class SemanticAnalizer {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
                     throw new Exception("[Error] -- No Operador Logico");
-                    //System.out.println("ERRO OPERADOR LOGICO");
-                    //TODO: ERROR
                 }
             } else if (analizeType(element).equals("OpLogicUnity")) {
                 param1 = searchType(symbolTable, stack.pop());
@@ -78,8 +70,6 @@ public class SemanticAnalizer {
                     stack.push(new Token("", Symbols.SBOOLEANO));
                 } else {
                     throw new Exception("[Error] -- No Operador Logico Não");
-                    //System.out.println("ERRO OPERADOR LOGICO NÃO");
-                    //TODO: ERROR
                 }
             }
             i++;

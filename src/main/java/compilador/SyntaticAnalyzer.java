@@ -26,7 +26,6 @@ public class SyntaticAnalyzer {
 
     public void Syntatic() throws Exception {
         label = 1;
-        System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
 
         if (listToken.get(i).getSimbol().equals(Symbols.SPROGRAMA)) {
             SemanticAnalizer.GenerationCode("", "START", "", "");
@@ -46,7 +45,7 @@ public class SyntaticAnalyzer {
                         throw new Exception("[Error] -- esperado um .");
                     }
                 } else {
-                    throw new Exception("[Error] -- esperado um ;1");
+                    throw new Exception("[Error] -- esperado um ;");
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador");
@@ -57,7 +56,7 @@ public class SyntaticAnalyzer {
         SymbolTable firstElement = symbolTable.peek();
         SymbolTable elementAux = symbolTable.peek();
         int flag = 0;
-        int size = symbolTable.size();//TODO: pq aqui precisa?
+        int size = symbolTable.size();
         for (int i = 0; i < size; i++) {
                 elementAux = symbolTable.pop();
                 if (elementAux.getType().equals(Symbols.SINTEIRO) || elementAux.getType().equals(Symbols.SBOOLEANO) || elementAux.getType().equals(Symbols.SVAR)) {
@@ -73,17 +72,14 @@ public class SyntaticAnalyzer {
             SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", variablesMemory), String.format("%d", countVariable));
         }
         SemanticAnalizer.GenerationCode("", "DALLOC", String.format("%d", variablesMemory - 1), "1");
-        SemanticAnalizer.GenerationCode("", "HLT", "", "");//TODO: TALVEZ SEJA DENTRO
-        for (SymbolTable element : symbolTable) {
-            System.out.println(element.getLevel() + " " + element.getLexeme() + " " + element.getType());
-        }
+        SemanticAnalizer.GenerationCode("", "HLT", "", "");
+
         SemanticAnalizer.CloseFile();
     }
 
-    private void Unstack() throws Exception {//TODO: TA ERRADO TEM Q SER SALVAR PRA VOLTAR NO ALLOC
+    private void Unstack() throws Exception {
         int countVariable = 0;
         SymbolTable element = symbolTable.peek();
-        //int size = symbolTable.size();
         for (int i = 0; i < symbolTable.size(); i++) {
             if (symbolTable.peek().getLevel() == null) {
                 element = symbolTable.pop();
@@ -175,7 +171,7 @@ public class SyntaticAnalyzer {
             }
             i++;
         } else {
-            throw new Exception("[Error] -- esperado \"inicio\" no lugar de: " + listToken.get(i).getSimbol());
+            throw new Exception("[Error] -- esperado \"inicio\" no lugar de: " + listToken.get(i).getLexema());
         }
     }
 
@@ -195,7 +191,7 @@ public class SyntaticAnalyzer {
         }
     }
 
-    private void AnalyzeVariablesDeclaration() throws Exception {//Analisa_et_variáveis
+    private void AnalyzeVariablesDeclaration() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SVAR)) {
             i++;//LEXICO(TOKEN)
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
@@ -238,7 +234,7 @@ public class SyntaticAnalyzer {
                 throw new Exception("[Error] -- esperado um identificador para variavel");
             }
         } while (!listToken.get(i).getSimbol().equals(Symbols.SDOIS_PONTOS));
-        SemanticAnalizer.GenerationCode("", "ALLOC", String.format("%d", auxVariablesMemory), String.format("%d", variablesMemory - auxVariablesMemory));//TODO: talvez tenha q juntar os allocs
+        SemanticAnalizer.GenerationCode("", "ALLOC", String.format("%d", auxVariablesMemory), String.format("%d", variablesMemory - auxVariablesMemory));
         i++;
         AnalyzeType();
     }
@@ -295,12 +291,9 @@ public class SyntaticAnalyzer {
                 if(positionOnTableFunction!=-1){
                     SemanticAnalizer.GenerationCode("", "STR", "0", "");
                 }else{
-                    throw new Exception("[Error] -- Erro de atribuição" );
+                    throw new Exception("[Error] -- Erro de atribuição");
                 }
             }else{
-//                if (!returnExitExpression.equals(symbolTable.get(positionOnTableVariable).getType())) {
-//                    throw new Exception("[Error] -- Erro de atribuição");
-//                }
                 Token tokenCurrent = listToken.get(initExpression - 2);
                 int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
                 if(!symbolTable.get(positionCurrent-1).getType().equals(returnExitExpression)){
@@ -369,10 +362,10 @@ public class SyntaticAnalyzer {
                     if (listToken.get(i).getSimbol().equals(Symbols.SFECHA_PARENTESES)) {
                         i++;
                     } else {
-                        throw new Exception("[Error] -- esperado um )1");
+                        throw new Exception("[Error] -- esperado um )");
                     }
                 } else {
-                    throw new Exception("[Error] -- 2");
+                    throw new Exception("[Error] -- variavel não encontrada");
                 }
             } else {
                 throw new Exception("[Error] -- esperado um identificador");
@@ -403,12 +396,9 @@ public class SyntaticAnalyzer {
         List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
         ScrollExpressionToGenerationCode(Exit);
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
-        System.out.println("returnExitExpretion:" + returnExitExpretion);
         if (!returnExitExpretion.equals(Symbols.SBOOLEANO)) {
-            System.out.println("ERROR");
-            //TODO:ERROR
+            throw new Exception("[Error] -- Esperado um booleano");
         }
-        //TODO: chama posfixo
         if (listToken.get(i).getSimbol().equals(Symbols.SFACA)) {
             auxLabel_2 = label;
             SemanticAnalizer.GenerationCode("", "JMPF", String.format("%d", label), "");
@@ -440,10 +430,8 @@ public class SyntaticAnalyzer {
         ScrollExpressionToGenerationCode(Exit);
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
 
-        System.out.println("returnExitExpretion:" + returnExitExpretion);
         if (!returnExitExpretion.equals(Symbols.SBOOLEANO)) {
-            System.out.println("ERROR");
-            //TODO:ERROR
+            throw new Exception("[ERROR] Esperado um booleano");
         }
         int falseLabel = label, finalLabel = label;
         if (listToken.get(i).getSimbol().equals(Symbols.SENTAO)) {
@@ -580,7 +568,7 @@ public class SyntaticAnalyzer {
                     throw new Exception("[Error] -- esperado ;");
                 }
             } else {
-                throw new Exception("[Error] -- 3");
+                throw new Exception("[Error] -- procedimento já declarado");
             }
 
         } else {
@@ -622,7 +610,7 @@ public class SyntaticAnalyzer {
                     throw new Exception("[Error] -- esperado :");
                 }
             } else {
-                throw new Exception("[Error] -- 4");
+                throw new Exception("[Error] -- Função já declarada");
             }
         } else {
             throw new Exception("[Error] -- esperado um identificador valido");
@@ -681,11 +669,9 @@ public class SyntaticAnalyzer {
         int index = 0;
         for (SymbolTable element : symbolTable) {
             index++;
-            //   if (element.getLevel().equals(level)) {
             if (element.getLexeme().equals(lexeme)) {
                 return index;
             }
-            // }
         }
         return -1;
     }
@@ -722,12 +708,12 @@ public class SyntaticAnalyzer {
             int ind = searchTable(listToken.get(i).getLexema(), level);
             if (ind != -1) {
                 if (symbolTable.get(ind).getType().equals(SymbolTableType.STINTFUNCTION) || symbolTable.get(ind).getType().equals(SymbolTableType.STBOOLFUNCTION)) {
-                    i++;//TODO: ANALISA CHAMADA DE FUNÇÃO
+                    i++;
                 } else {
                     i++;
                 }
             } else {
-                throw new Exception("[Error] -- 5");
+                throw new Exception("[Error] -- Simbolo não declarado");
             }
         } else if (listToken.get(i).getSimbol().equals(Symbols.SNUMERO)) {
             i++;
