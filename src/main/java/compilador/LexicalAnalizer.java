@@ -39,12 +39,8 @@ public class LexicalAnalizer {
 
             if (i < length) {
                 getToken();
-                //i++;
             }
         }
-//        for (Token token : listToken) {
-//            System.out.printf("%s # %s\n", token.getLexema(), token.getSimbol());
-//        }
         return listToken;
     }
 
