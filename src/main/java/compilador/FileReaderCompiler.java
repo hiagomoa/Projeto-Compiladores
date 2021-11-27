@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class FileReaderCompiler {
-    public byte[] reader() throws IOException {
-        Path path = Paths.get("src/Arquivos/finalTest.txt");
+    public byte[] reader(String p) throws IOException {
+        Path path = Paths.get(p);
         byte[] data = Files.readAllBytes(path);
         return data;
     }
