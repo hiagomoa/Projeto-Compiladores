@@ -30,7 +30,7 @@ public class LexicalAnalizer {
     public LinkedList<Token> lexical() throws Exception {
         int length = data.length;
         for (i = 0; i < length; i++) {
-            while ((i < length - 1) && (((char) data[i] == '{') || Character.isSpace((char) data[i]))) {
+            while ((i < length ) && (((char) data[i] == '{') || Character.isSpace((char) data[i]))) {
                 if ((char) data[i] == '{') {
                     while (((char) data[i] != '}') && (i < length - 1)) {
                         if (i == length - 1) {
@@ -232,7 +232,11 @@ public class LexicalAnalizer {
         }
         if ((char) data[i] == '.') {
             listToken.add(new Token(pontuation, Symbols.SPONTO));
-            i++;
+            if(i < data.length-1) {
+                if (Character.isSpace((char)data[i+1])) {
+                    i++;
+                }
+            }
             return;
         }
     }
