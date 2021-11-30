@@ -26,6 +26,17 @@ public class SemanticAnalizer {
         writer = new PrintWriter(file);
     }
 
+    /**
+     * método <b>Semantic</b> método principal que percorre a expressão em <b>Exit</b>
+     * identificando operadores e vendo se os atributos estão semanticamente correto,
+     * Ex: A + B; "A" e "B" devem ser inteiros, pois "+" é um operado aritimético
+     * @param Exit é um List<Token> que contem a expressão já pós fixada
+     * @see Token
+     * @param symbolTable é um LinkedList<SymbolTable> contendo todos os sombolos presentes da tabela de simbolo
+     * @see SymbolTable
+     * @return String "sinteiro" ou "sbooleano", indicando resultado da expressão
+     * @throws Exception
+     */
     public String Semantic(List<Token> Exit, LinkedList<SymbolTable> symbolTable) throws Exception {
         int i = 0;
         Token element;
@@ -94,7 +105,11 @@ public class SemanticAnalizer {
         return "";
     }
 
-
+    /**
+     * Método <b>analizeType</b> função responsável por fazer a verificação do tipo (se é uma operação aritmetica, um operador, etc.) e retornar o tipo do operador
+     * @param operator
+     * @return
+     */
     private String analizeType(Token operator) {
         if (operator.getSimbol().equals(Symbols.SMAIS) || operator.getSimbol().equals(Symbols.SMENOS) ||
                 operator.getSimbol().equals(Symbols.SMULT) || operator.getSimbol().equals(Symbols.SDIV)) {
@@ -117,6 +132,9 @@ public class SemanticAnalizer {
         return "i";
     }
 
+    /**
+     * Método <b>searchType</b> é responsável por verificar o tipo do operador se ele é inteiro ou booleano
+     */
     private String searchType(LinkedList<SymbolTable> symbolTable, Token element) {
         int i = 0;
 
@@ -138,13 +156,23 @@ public class SemanticAnalizer {
                 if(symbolTable.get(i).getType().equals(SymbolTableType.STBOOLFUNCTION)){
                     return Symbols.SBOOLEANO;
                 }
-                return symbolTable.get(i).getType();
+                if(symbolTable.get(i).getType().equals(Symbols.SBOOLEANO)){
+                    return Symbols.SBOOLEANO;
+                }
+                if(symbolTable.get(i).getType().equals(Symbols.SINTEIRO)){
+                    return Symbols.SINTEIRO;
+                }
             }
             i++;
         }
         return "";
     }
 
+    //verifica e retorna o tipo da variavel
+
+    /**
+     * Método <b>verifyType</b> é responsável por verificar na tabela de simbolos se contem o elemento atual e em caso afirmativo retorna a sua representação interna do "token"
+     */
     private String verifyType(LinkedList<SymbolTable> symbolTable, Token element){
         for(SymbolTable value: symbolTable){
             if(value.getLexeme().equals(element.getLexema())){
@@ -164,11 +192,16 @@ public class SemanticAnalizer {
         }
         return null;
     }
-
+    /**
+     * Método <b>GenerationCode</b> é responsável por imprimir no arguivo o codigo assembly gerado
+     */
     public void GenerationCode(String label_1, String label_2, String label_3, String label_4) throws IOException {
         writer.println(CompleteWithSpaces(label_1) + CompleteWithSpaces(label_2) + CompleteWithSpaces(label_3) + CompleteWithSpaces(label_4));
     }
 
+    /**
+     * Método <b>CompleteWithSpacs</b> é responsável completar cada Label do código gerado com até 8 espaços
+     */
     private String CompleteWithSpaces(String label) {
         while (label.length() < 8) {
             label += " ";
@@ -176,10 +209,16 @@ public class SemanticAnalizer {
         return label;
     }
 
+    /**
+     * Método <b>CloseFile</b> é responsável completar fechar o arquivo no final do codigo
+     */
     public void CloseFile() throws IOException {
         file.close();
     }
 
+    /**
+     * Método <b>FindLabel</b> é responsável por achar a label que será atribuida para ser gerado no cogido
+     */
     public String FindLabel(LinkedList<SymbolTable> symbolTables, String lexeme){
         Optional<SymbolTable> a = symbolTables.stream().filter(element->element.getLexeme().equals(lexeme)).findFirst();
         if(a.isPresent()){
