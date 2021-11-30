@@ -12,6 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Class <b>SemanticAnalizer</b> responsavel por toda analize Semantica do compilador
+ */
 public class SemanticAnalizer {
     LinkedList<Token> stack = new LinkedList<Token>();
     LinkedList<String> generatedCode = new LinkedList<String>();
@@ -90,6 +93,7 @@ public class SemanticAnalizer {
         }
         return "";
     }
+
 
     private String analizeType(Token operator) {
         if (operator.getSimbol().equals(Symbols.SMAIS) || operator.getSimbol().equals(Symbols.SMENOS) ||

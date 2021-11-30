@@ -5,6 +5,9 @@ import compilador.models.Token;
 
 import java.util.LinkedList;
 
+/**
+ * Class <b>LexicalAnalizer</b> responsavel por toda analize lexica do compilador
+ */
 public class LexicalAnalizer {
     public int i = 0;
     public byte[] data;
@@ -15,6 +18,15 @@ public class LexicalAnalizer {
         this.data = data;
     }
 
+    /**
+     * método <b>lexical</b>, principal do analizador lexico,
+     * percorrendo o array de bytes data,setado globalmente,
+     * validando chaves ('{','}') e espaços em brancos,
+     * até encontrar algo diferente de chaves e espaços vazios.
+     * @throws Exception
+     * @return <b>listToken</b> um LinkedList com Lexema e simbolo
+     * @see Token
+     */
     public LinkedList<Token> lexical() throws Exception {
         int length = data.length;
         for (i = 0; i < length; i++) {
@@ -44,6 +56,12 @@ public class LexicalAnalizer {
         return listToken;
     }
 
+    /**
+     * método <b>getToken</b> responsável por checar se o token lido se enquadra
+     * em qual categoria (digito, palavra, atribuição
+     * operador aritimetico e relacional ou pontuação)
+     * @throws Exception
+     */
     private void getToken() throws Exception {
         if (Character.isDigit(data[i])) {
             managerDigit();
@@ -72,6 +90,10 @@ public class LexicalAnalizer {
         throw new Exception("[Error] -- "+(line+1)+":"+(i-col)+"||=> "+ (char)data[i] + " é inválido!");
     }
 
+    /**
+     * método <b>managerDigit</b> responsável por salvar na lista de token, o token de numero, com seu Lexema("digit")
+     * e símbolo("Symbols.SNUMERO")
+     */
     private void managerDigit() {
         String digit = new String();
         digit += (char) data[i];
@@ -84,6 +106,10 @@ public class LexicalAnalizer {
         listToken.add(new Token(digit, Symbols.SNUMERO));
     }
 
+    /**
+     * método <b>managerIdentifyAndReservedWord</b> responsável por identificar e administrar palavras reservadas
+     * adicionando-as a lista de token
+     */
     private void managerIdentifyAndReservedWord() {
         String id = new String();
         id += (char) data[i];
@@ -97,6 +123,10 @@ public class LexicalAnalizer {
         listToken.add(new Token(id, symbol));
     }
 
+    /**
+     * método <b>managerAttribution</b> responsável por identificar uma atribuição ou dois pontos e
+     * salvar na lista de token, com Lexema e simbolo
+     */
     private void managerAttribution() {
         String operatorAttribution = new String();
         operatorAttribution += (char) data[i];
@@ -111,6 +141,10 @@ public class LexicalAnalizer {
         }
     }
 
+    /**
+     * método <b>managerOperatorArithmetic</b> responsável por identificar e salvar na lista de tokens
+     * operadores aritmeticos
+     */
     private void managerOperatorArithmetic() {
         String operatorArithmetic = new String();
         operatorArithmetic += (char) data[i];
@@ -128,6 +162,11 @@ public class LexicalAnalizer {
         }
     }
 
+    /**
+     * método <b>managerRelationalOperator</b> identifica e insere na lista de tokens os operadores
+     * relacionais (!, !=, <, <=, >, >= ou =)
+     * @throws Exception
+     */
     private void managerRelationalOperator() throws Exception {
         String relationalOperator = new String();
         relationalOperator += (char) data[i];
@@ -138,7 +177,7 @@ public class LexicalAnalizer {
                 listToken.add(new Token(relationalOperator, Symbols.SDIF));
                 return;
             }
-            throw new Exception("[Error] -- "+(line+1)+":"+(i-col)+"||=> "+ (char)data[i] + " is not a !=");
+            throw new Exception("[Error] -- "+(line+1)+" : "+(i-col)+" ||=> "+ (char)data[i] + " não é !=");
 
         }
         if ((char) data[i] == '<') {
@@ -169,6 +208,9 @@ public class LexicalAnalizer {
         }
     }
 
+    /**
+     * método <b>managerPontuation</b> identifica pontuação e insere na lista de tokens o lexema da pontuação e o simbolo
+     */
     private void managerPontuation() {
         String pontuation = new String();
         pontuation += (char) data[i];
@@ -190,10 +232,17 @@ public class LexicalAnalizer {
         }
         if ((char) data[i] == '.') {
             listToken.add(new Token(pontuation, Symbols.SPONTO));
+            i++;
             return;
         }
     }
 
+    /**
+     * método <b>verifyIdentifyAndReservedWord</b> identifica palavra reservada e retorna seu simbolo.
+     * @param id identificador da palavra reservada
+     * @return simbolo String indentificada.
+     * @see Symbols
+     */
     private String verifyIdentifyAndReservedWord(String id) {
         switch (id) {
             case "programa":
@@ -263,6 +312,4 @@ public class LexicalAnalizer {
                 return Symbols.SIDENTIFICADOR;
         }
     }
-
-
 }
