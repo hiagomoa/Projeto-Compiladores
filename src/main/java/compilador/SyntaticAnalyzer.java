@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class <b>SyntaticAnalizer</b> responsavel por toda analize sintatica do compilador
+ */
 public class SyntaticAnalyzer {
     int label;
     int i = 0;
@@ -24,9 +27,12 @@ public class SyntaticAnalyzer {
         this.listToken = data;
     }
 
+    /**
+     * método <b>Syntatic</b> valida simbolos reservados de estrura de código necessário
+     * @throws Exception
+     */
     public void Syntatic() throws Exception {
         label = 1;
-
         if (listToken.get(i).getSimbol().equals(Symbols.SPROGRAMA)) {
             SemanticAnalizer.GenerationCode("", "START", "", "");
             i++;//LEXICO(TOKEN)
@@ -53,17 +59,11 @@ public class SyntaticAnalyzer {
         }
 
         int countVariable = 0;
-        SymbolTable firstElement = symbolTable.peek();
-        SymbolTable elementAux = symbolTable.peek();
-        int flag = 0;
+        SymbolTable elementAux;
         int size = symbolTable.size();
         for (int i = 0; i < size; i++) {
                 elementAux = symbolTable.pop();
                 if (elementAux.getType().equals(Symbols.SINTEIRO) || elementAux.getType().equals(Symbols.SBOOLEANO) || elementAux.getType().equals(Symbols.SVAR)) {
-                    if (flag == 0) {
-                        firstElement = elementAux;
-                        flag = 1;
-                    }
                     countVariable++;
                 }
         }
@@ -77,9 +77,12 @@ public class SyntaticAnalyzer {
         SemanticAnalizer.CloseFile();
     }
 
+    /**
+     * Método <b>Unstack</b> é responsável por desempilhar e verificar a quantidade de variáveis para ser desalocada
+     */
     private void Unstack() throws Exception {
         int countVariable = 0;
-        SymbolTable element = symbolTable.peek();
+        SymbolTable element;
         for (int i = 0; i < symbolTable.size(); i++) {
             if (symbolTable.peek().getLevel() == null) {
                 element = symbolTable.pop();
@@ -100,6 +103,13 @@ public class SyntaticAnalyzer {
         SemanticAnalizer.GenerationCode("", "RETURN","", "");
     }
 
+    /**
+     * Método <b>SearchDuplicatedVarInTable</b> é responsável por verificar se a variavel já foi declarada
+     * dentro do nivel.
+     * @param lexeme String
+     * @return boolean true para encontrado variavel duplicada, false para o caso contrario
+     * @throws Exception
+     */
     private boolean SearchDuplicatedVarInTable(String lexeme) throws Exception {
         for (SymbolTable element : symbolTable) {
             if (element.getLevel() == null) {
@@ -113,7 +123,14 @@ public class SyntaticAnalyzer {
         return false;
     }
 
-    private boolean SearchDeclarationVariableOnTable(String lexeme) throws Exception {
+    /**
+     * Método <b>SearchGlobalDeclaration</b> é responsável por verificar se o identificador
+     * está presente na tabela de simbolos
+     * @param lexeme String
+     * @return boolean true caso o lexema exista na tabela de simbolos falso caso não seja encontrado
+     * @throws Exception
+     */
+    private boolean SearchGlobalDeclaration(String lexeme) throws Exception{
         for (SymbolTable element : symbolTable) {
             if (element.getLexeme().equals(lexeme)) {
                 return true;
@@ -122,24 +139,17 @@ public class SyntaticAnalyzer {
         return false;
     }
 
-    private boolean SearchDeclarationFunctionOnTable(String lexeme) throws Exception {
-        for (SymbolTable element : symbolTable) {
-            if (element.getLexeme().equals(lexeme)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean SearchDeclarationProcedureOnTable(String lexeme) throws Exception {
-        for (SymbolTable element : symbolTable) {
-            if (element.getLexeme().equals(lexeme)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Método <b>InsertTable</b> é a é responsavel por inserir na tabela de simbolos,
+     * Caso o label seja null significa que esta sendo inserido um nome de programa
+     * Nos demais casos são inseridos variaveis, funcoes, e procedimentos
+     * @param lexeme String
+     * @param type String é um SymbolTableType
+     * @see SymbolTableType
+     * @param level String marcador de nivel de procedimento ou função, é utilizado o caractere "L"
+     * @param label Integer posição da memória ou posicação de função/procedimento
+     * @throws Exception
+     */
     private void InsertTable(String lexeme, String type, String level, Integer label) throws Exception {
         if (label != null) {
             symbolTable.push(new SymbolTable(lexeme, type, level, label));
@@ -148,6 +158,10 @@ public class SyntaticAnalyzer {
         symbolTable.push(new SymbolTable(lexeme, type));
     }
 
+    /**
+     * método <b>BlockAnalyzer</b> é responsavel por analizar uma declaração, SubRotina ou Comando
+     * @throws Exception
+     */
     private void BlockAnalyzer() throws Exception {
         i++;
         AnalyzeVariablesDeclaration();
@@ -155,6 +169,11 @@ public class SyntaticAnalyzer {
         AnalyzeCommands();
     }
 
+    /**
+     * método <b>AnalyzeCommands</b> é responsavel por validar a estrutura necessária
+     * para o corpo de um comando.
+     * @throws Exception
+     */
     private void AnalyzeCommands() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SINICIO)) {
             i++;
@@ -175,6 +194,11 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>SimpleCommandAnalyser</b> é responsável por verificar palavras reservadas
+     * de comandos.
+     * @throws Exception
+     */
     private void SimpleCommandAnalyser() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
             ChProcedureAtributeAnalyzer();
@@ -191,6 +215,11 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>AnalyzeVariableDeclaration</b> é responsavel por verificar
+     * declaração de variaveis, consultando a existencia de indentificador.
+     * @throws Exception
+     */
     private void AnalyzeVariablesDeclaration() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SVAR)) {
             i++;//LEXICO(TOKEN)
@@ -209,6 +238,11 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>AnalyzeVariable</b> é responsavel por validar as variaveis que estão sendo criadas
+     * verificando seu identificador e inserindo na tabela de simbolos
+     * @throws Exception
+     */
     private void AnalyzeVariables() throws Exception {
         int auxVariablesMemory = variablesMemory;
         do {
@@ -239,6 +273,10 @@ public class SyntaticAnalyzer {
         AnalyzeType();
     }
 
+    /**
+     * Metódo <b>AnalyzeType</b> é responsavel por restringir variaveis a inteiros e booleanos
+     * @throws Exception
+     */
     private void AnalyzeType() throws Exception {
         if (!listToken.get(i).getSimbol().equals(Symbols.SINTEIRO) && !listToken.get(i).getSimbol().equals(Symbols.SBOOLEANO)) {
             throw new Exception("[Error] -- tipo não esperado");
@@ -248,6 +286,10 @@ public class SyntaticAnalyzer {
         i++;
     }
 
+    /**
+     * Metódo <b>PushIntoTheTable</b> é responsavel por colocar o tipo corretamente da variavel na tabela de simbolos
+     * @throws Exception
+     */
     private void PushTypeIntoTheTable(String lexeme) throws Exception {
         for (int i = 0; i < symbolTable.size(); i++) {
             if (symbolTable.get(i).getType().equals(SymbolTableType.STVARIABLE)) {
@@ -264,6 +306,11 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>ChProcedureAtributeAnalyzer</b> é responsavel por toda lógica de atribuição
+     * validando sintaticamente e semanticamente sua corretude.
+     * @throws Exception
+     */
     private void ChProcedureAtributeAnalyzer() throws Exception {
         i++;
         if (listToken.get(i).getSimbol().equals(Symbols.SATRIBUICAO)) {
@@ -273,20 +320,26 @@ public class SyntaticAnalyzer {
             ExpressionAnalyzer();
             int finishExpression = i;
 
+            // slice da expressão para ser enviada para a conversão para pós fixa
             List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
 
+            //corrigi o identificador positivo e negatico (+u ,-u) na lista auxiliar
             inFixedList.forEach(element -> {
                 sliceInFixed.get(element.getPosition() - initExpression).setLexema(element.getLexema());
                 sliceInFixed.get(element.getPosition() - initExpression).setSimbol(element.getSimbol());
             });
 
+            // chamada da conversão pós fixa passando o slice
             List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
+            //chamada da verificação de semantica da saido do pós fixo
             String returnExitExpression = new SemanticAnalizer().Semantic(Exit, symbolTable);
-
+            //pega lexema que será atribuido o retorno da expressão
             String lexemaOnPosition = listToken.get(initExpression - 2).getLexema();
+            //verifica existencia de uma possivel variavel na tabela de simbolos retornando posição
             int positionOnTableVariable = searchTableVariable(lexemaOnPosition);
             ScrollExpressionToGenerationCode(Exit);
             if(positionOnTableVariable==-1){
+                //caso não exista variavel verifica a existencia de uma posivel função
                 int positionOnTableFunction = searchTableFunction(lexemaOnPosition);
                 if(positionOnTableFunction!=-1){
                     SemanticAnalizer.GenerationCode("", "STR", "0", "");
@@ -296,6 +349,7 @@ public class SyntaticAnalyzer {
             }else{
                 Token tokenCurrent = listToken.get(initExpression - 2);
                 int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
+                //caso exista a variavel verifica o tipo do retorno da expressão e da variavel
                 if(!symbolTable.get(positionCurrent-1).getType().equals(returnExitExpression)){
                     throw new Exception("[Error] -- Erro de atribuição");
                 }else{
@@ -307,14 +361,21 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>ReadAnalyzer</b> é responsável por gerar o código de máquina que indica a leitura de um dado,
+     * verificando a varivel em que sera gravada.
+     * Ex: leia(v1) se transforma em:
+     * RD
+     * STR V1
+     * @throws Exception
+     */
     private void ReadAnalyzer() throws Exception {
         i++;
         SemanticAnalizer.GenerationCode("", "RD", "", "");
-        //label+=1;
         if (listToken.get(i).getSimbol().equals(Symbols.SABRE_PARENTESES)) {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                if (SearchDeclarationVariableOnTable(listToken.get(i).getLexema())) {
+                if (SearchGlobalDeclaration(listToken.get(i).getLexema())) {
                     Token tokenCurrent = listToken.get(i);
                     String labelFinded = SemanticAnalizer.FindLabel(symbolTable, tokenCurrent.getLexema());
                     int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
@@ -340,13 +401,18 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>WriteAnalyzer</b> é responsavel por verificar a escrita de um dado,
+     * limitando-o a inteiros.
+     * @throws Exception
+     */
     private void WriteAnalyzer() throws Exception {
         i++;
 
         if (listToken.get(i).getSimbol().equals(Symbols.SABRE_PARENTESES)) {
             i++;
             if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-                if (SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
+                if (SearchGlobalDeclaration(listToken.get(i).getLexema())) {
                     Token tokenCurrent = listToken.get(i);
                     String labelFinded = SemanticAnalizer.FindLabel(symbolTable, tokenCurrent.getLexema());
                     int positionCurrent = searchTable(tokenCurrent.getLexema(),null);
@@ -375,6 +441,11 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>WhileAnalyzer</b> é responsavel por verificar a estrutura de repetição while do código,
+     * validando sua expressão.
+     * @throws Exception
+     */
     private void WhileAnalyzer() throws Exception {
         int auxLabel_1 = label, auxLabel_2;
         i++;
@@ -386,16 +457,19 @@ public class SyntaticAnalyzer {
         SemanticAnalizer.GenerationCode(String.format("%d", label), "NULL", "", "");
         label = label + 1;
 
-
+        // slice da expressão para ser enviada para a conversão para pós fixa
         List<Token> sliceInFixed = listToken.subList(initExpression, finishExpression);
+        //chamada da verificação de semantica da saida do pós fixo
         inFixedList.forEach(element -> {
             sliceInFixed.get(element.getPosition() - initExpression).setLexema(element.getLexema());
             sliceInFixed.get(element.getPosition() - initExpression).setSimbol(element.getSimbol());
         });
-
+        // chamada da conversão pós fixa passando o slice
         List<Token> Exit = new ConversionPosFixed().InFixedToPosFixed(sliceInFixed);
         ScrollExpressionToGenerationCode(Exit);
+        //chamada da verificação de semantica da saido do pós fixo
         String returnExitExpretion = new SemanticAnalizer().Semantic(Exit, symbolTable);
+        //espera-se que o retorno seja um booleano
         if (!returnExitExpretion.equals(Symbols.SBOOLEANO)) {
             throw new Exception("[Error] -- Esperado um booleano");
         }
@@ -412,6 +486,11 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>IfAnalyzer</b> é responsavel por verificar as estruturas condicionais do código,
+     * validando a sua expressão.
+     * @throws Exception
+     */
     private void IfAnalyzer() throws Exception {
         i++;
         inFixedList = new LinkedList<SignalNumbers>();
@@ -453,6 +532,11 @@ public class SyntaticAnalyzer {
         SemanticAnalizer.GenerationCode( String.format("%d",finalLabel), "NULL", "", "");
     }
 
+    /**
+      Metódo <b>ScrollExpressionToGenerationCode</b> é responsavel por carregar da lista
+     * constantes, variáveis ou instruções que executam uma operação e assim gerar o código de máquina
+     * @param list é a lista que contém Tokens
+     */
     private void ScrollExpressionToGenerationCode(List<Token> list) {
         try {
             for (Token token : list) {
@@ -524,6 +608,10 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>AnalyzeSubRoutine</b> é responsavel por
+     * @throws Exception
+     */
     private void AnalyzeSubRoutine() throws Exception {
         Integer auxLabel = null, flag = 0;
 
@@ -552,12 +640,17 @@ public class SyntaticAnalyzer {
 
     }
 
+    /**
+     * Metódo <b>ProcedureDeclarationAnalyzer</b> é responsavel por inserir o token na tabela de simbolos
+     * e gerar o código de procedimentos.
+     * @throws Exception
+     */
     private void ProcedureDeclarationAnalyzer() throws Exception {
         i++;
         level = "L";
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
 
-            if (!SearchDeclarationProcedureOnTable(listToken.get(i).getLexema())) {
+            if (!SearchGlobalDeclaration(listToken.get(i).getLexema())) {
                 InsertTable(listToken.get(i).getLexema(), SymbolTableType.STPROCEDURE, level, label);
                 SemanticAnalizer.GenerationCode(String.format("%d", label), "NULL", "", "");
                 label++;
@@ -579,11 +672,16 @@ public class SyntaticAnalyzer {
         level = "";
     }
 
+    /**
+     * Metódo <b>FunctionDeclarationAnalyzer</b> é responsavel por inserir o token na tabela de simbolos
+     * e gerar o codigo das funções.
+     * @throws Exception
+     */
     private void FunctionDeclarationAnalyzer() throws Exception {
         i++;
         level = "L";
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
-            if (!SearchDeclarationFunctionOnTable(listToken.get(i).getLexema())) {
+            if (!SearchGlobalDeclaration(listToken.get(i).getLexema())) {
                 InsertTable(listToken.get(i).getLexema(), "", level, label);
                 SemanticAnalizer.GenerationCode(String.format("%d", label), "NULL", "", "");
                 label++;
@@ -619,7 +717,11 @@ public class SyntaticAnalyzer {
         level = "";
     }
 
-    private void ExpressionAnalyzer() throws Exception { //TODO: CHAMAR POS FIXICO APOS chamada desta função
+    /**
+     * Metódo <b><ExpressionAnalyzer/b> é responsavel por validar operadores relacional.
+     * @throws Exception
+     */
+    private void ExpressionAnalyzer() throws Exception {
 
         SimpleExpressionAnalyzer();
         if (listToken.get(i).getSimbol().equals(Symbols.SMAIOR) ||
@@ -634,6 +736,12 @@ public class SyntaticAnalyzer {
 
     }
 
+    /**
+     * Metódo <b>SimpleExpressionAnalyzer</b> analisa uma expressão simples e também identica positivos e negativos
+     * na expressão, adicionando-os a uma lista auxiliar que é validade após nas funções, "WhileAnalizer",
+     * "ifAnalizer" e "ChProcedureAtributeAnalyzer".
+     * @throws Exception
+     */
     private void SimpleExpressionAnalyzer() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SMAIS) || listToken.get(i).getSimbol().equals(Symbols.SMENOS)) {
             if (listToken.get(i).getSimbol().equals(Symbols.SMAIS)) {
@@ -655,6 +763,10 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>TermAnalyzer</b> é responsavel por verificar se é uma multiplicação, divisão ou and.
+     * @throws Exception
+     */
     private void TermAnalyzer() throws Exception {
         FactorAnalyzer();
         while (listToken.get(i).getSimbol().equals(Symbols.SMULT) ||
@@ -665,6 +777,9 @@ public class SyntaticAnalyzer {
         }
     }
 
+    /**
+     * Metódo <b>searchTable</b> provura simbolo na tabela de simbolos atravez do lexema, sem restrição de level.
+     */
     private int searchTable(String lexeme, String level) {
         int index = 0;
         for (SymbolTable element : symbolTable) {
@@ -676,6 +791,9 @@ public class SyntaticAnalyzer {
         return -1;
     }
 
+    /**
+     * Metódo <b>searchTableVariable</b> é responsavel por procurar variaveis na tebela de simbolos atravez do lexema.
+     */
     private int searchTableVariable(String lexeme) {
         int index = 0;
         for (SymbolTable element : symbolTable) {
@@ -689,6 +807,9 @@ public class SyntaticAnalyzer {
         return -1;
     }
 
+    /**
+     * Metódo <b>searchTableFunction</b> é responsavel por procurar uma função na tabela de simbolos atráves do lexema.
+     */
     private int searchTableFunction(String lexeme) {
         int index = 0;
         for (SymbolTable element : symbolTable) {
@@ -703,6 +824,11 @@ public class SyntaticAnalyzer {
         return -1;
     }
 
+    /**
+     * Metódo <b>FactorAnalyzer</b> é responsável por verificar um trecho de código e rediricionar o fluxo para
+     * as devidos métodos sintaticos.
+     * @throws Exception
+     */
     private void FactorAnalyzer() throws Exception {
         if (listToken.get(i).getSimbol().equals(Symbols.SIDENTIFICADOR)) {
             int ind = searchTable(listToken.get(i).getLexema(), level);

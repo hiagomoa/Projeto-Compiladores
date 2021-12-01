@@ -32,7 +32,7 @@ public class SemanticAnalizer {
      * Ex: A + B; "A" e "B" devem ser inteiros, pois "+" é um operado aritimético
      * @param Exit é um List<Token> que contem a expressão já pós fixada
      * @see Token
-     * @param symbolTable é um LinkedList<SymbolTable> contendo todos os sombolos presentes da tabela de simbolo
+     * @param symbolTable é um LinkedList<SymbolTable> contendo todos os simbolos presentes da tabela de simbolo
      * @see SymbolTable
      * @return String "sinteiro" ou "sbooleano", indicando resultado da expressão
      * @throws Exception
@@ -45,7 +45,8 @@ public class SemanticAnalizer {
 
         while (i < Exit.size()) {
             element = Exit.get(i);
-            if (element.getSimbol().equals(Symbols.SNUMERO) || element.getSimbol().equals(Symbols.SIDENTIFICADOR) || element.getSimbol().equals(Symbols.SVERDADEIRO)|| element.getSimbol().equals(Symbols.SFALSO)) {
+            if (element.getSimbol().equals(Symbols.SNUMERO) || element.getSimbol().equals(Symbols.SIDENTIFICADOR) ||
+                element.getSimbol().equals(Symbols.SVERDADEIRO)|| element.getSimbol().equals(Symbols.SFALSO)) {
                 stack.push(element);
             } else if (analizeType(element).equals("OpArithmetic")) {
                 param1 = searchType(symbolTable, stack.pop());
@@ -106,9 +107,11 @@ public class SemanticAnalizer {
     }
 
     /**
-     * Método <b>analizeType</b> função responsável por fazer a verificação do tipo (se é uma operação aritmetica, um operador, etc.) e retornar o tipo do operador
-     * @param operator
-     * @return
+     * Método <b>analizeType</b> função responsável por fazer a verificação do tipo (se é uma operação aritmetica,
+     * um operador, etc.).
+     * @param operator Token contendo operador
+     * @see Token
+     * @return String tipo do operador.
      */
     private String analizeType(Token operator) {
         if (operator.getSimbol().equals(Symbols.SMAIS) || operator.getSimbol().equals(Symbols.SMENOS) ||
@@ -134,6 +137,12 @@ public class SemanticAnalizer {
 
     /**
      * Método <b>searchType</b> é responsável por verificar o tipo do operador se ele é inteiro ou booleano
+     * @param symbolTable é um LinkedList<SymbolTable> contendo todos os símbolos presentes da tabela de simbolo
+     * @see SymbolTable
+     * @param element é um Token
+     * @see Token
+     * @return <b>Symbols</b>
+     * @see Symbols
      */
     private String searchType(LinkedList<SymbolTable> symbolTable, Token element) {
         int i = 0;
@@ -168,10 +177,14 @@ public class SemanticAnalizer {
         return "";
     }
 
-    //verifica e retorna o tipo da variavel
-
     /**
-     * Método <b>verifyType</b> é responsável por verificar na tabela de simbolos se contem o elemento atual e em caso afirmativo retorna a sua representação interna do "token"
+     * Método <b>verifyType</b> é responsável por verificar na tabela de símbolos se contem o elemento atual.
+     * @param symbolTable é um LinkedList<SymbolTable> contendo todos os símbolos presentes da tabela de simbolo
+     * @see SymbolTable
+     * @param element é um Token
+     * @see Token
+     * @return em caso afirmativo retorna a sua representação interna do "token" (Symbols)
+     * @see Symbols
      */
     private String verifyType(LinkedList<SymbolTable> symbolTable, Token element){
         for(SymbolTable value: symbolTable){
@@ -192,15 +205,23 @@ public class SemanticAnalizer {
         }
         return null;
     }
+
     /**
      * Método <b>GenerationCode</b> é responsável por imprimir no arguivo o codigo assembly gerado
+     * @param label_1 String parametro de linha ou vazio
+     * @param label_2 String parametro de comando
+     * @param label_3 String parametro de parametro do comando 1
+     * @param label_4 String parametro de parametro do comando 2
+     * @throws IOException
      */
     public void GenerationCode(String label_1, String label_2, String label_3, String label_4) throws IOException {
         writer.println(CompleteWithSpaces(label_1) + CompleteWithSpaces(label_2) + CompleteWithSpaces(label_3) + CompleteWithSpaces(label_4));
     }
 
     /**
-     * Método <b>CompleteWithSpacs</b> é responsável completar cada Label do código gerado com até 8 espaços
+     * Método <b>CompleteWithSpacs</b> é responsável por completar cada Label do código gerado com até 8 espaços
+     * @param label String
+     * @return String label completada com 8 caracteres.
      */
     private String CompleteWithSpaces(String label) {
         while (label.length() < 8) {
@@ -211,6 +232,7 @@ public class SemanticAnalizer {
 
     /**
      * Método <b>CloseFile</b> é responsável completar fechar o arquivo no final do codigo
+     * @throws IOException
      */
     public void CloseFile() throws IOException {
         file.close();
@@ -218,11 +240,15 @@ public class SemanticAnalizer {
 
     /**
      * Método <b>FindLabel</b> é responsável por achar a label que será atribuida para ser gerado no cogido
+     * @param symbolTables é um LinkedList<SymbolTable> contendo todos os símbolos presentes da tabela de simbolo
+     * @see SymbolTable
+     * @param lexeme String
+     * @return String retorna a label (posição de memória ou posição de função/método)
      */
     public String FindLabel(LinkedList<SymbolTable> symbolTables, String lexeme){
         Optional<SymbolTable> a = symbolTables.stream().filter(element->element.getLexeme().equals(lexeme)).findFirst();
         if(a.isPresent()){
-            return  String.format("%d",a.get().getLabel());
+            return String.format("%d",a.get().getLabel());
         }
         return "";
     }

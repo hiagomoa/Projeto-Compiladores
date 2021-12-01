@@ -11,6 +11,13 @@ public class ConversionPosFixed {
     public ConversionPosFixed() {
     }
 
+    /**
+     * método <b>InFixedToPosFixed</b> converte uma expressão in-fixa para pós-fixa
+     * @param expr List<Token> expressão in-fixa
+     * @see Token
+     * @return List<Token> expressão pós-fixa
+     * @throws Exception
+     */
     public List<Token> InFixedToPosFixed(List<Token> expr) throws Exception{
         int i = 0;
         List<Token> Exit = new ArrayList<Token>();
@@ -20,7 +27,8 @@ public class ConversionPosFixed {
         do {
             currentValue = expr.get(i);
             i++;
-            if (currentValue.getSimbol().equals(Symbols.SIDENTIFICADOR) || currentValue.getSimbol().equals(Symbols.SNUMERO)||currentValue.getSimbol().equals(Symbols.SVERDADEIRO)||currentValue.getSimbol().equals(Symbols.SFALSO)) {
+            if (currentValue.getSimbol().equals(Symbols.SIDENTIFICADOR) || currentValue.getSimbol().equals(Symbols.SNUMERO)||
+               currentValue.getSimbol().equals(Symbols.SVERDADEIRO)|| currentValue.getSimbol().equals(Symbols.SFALSO)) {
                 Exit.add(currentValue);
             } else if (currentValue.getSimbol().equals(Symbols.SABRE_PARENTESES)) {
                 stack.push(currentValue);
@@ -62,9 +70,14 @@ public class ConversionPosFixed {
         return Exit;
     }
 
+    /**
+     * Verifica prioridade de Simbolos
+     * @param current Token elemento atual da expressão
+     * @param top Tolen elemento do topo da pilha
+     * @return booleno se current > top true, caso contrario falso
+     */
     private boolean Priority(Token current, Token top) {
         int pc = 0, pt = 0;
-
 
          if (current.getSimbol().equals(Symbols.SE))
             pc = 8;
@@ -83,7 +96,6 @@ public class ConversionPosFixed {
             pc = 2;
         else if (current.getSimbol().equals(Symbols.SABRE_PARENTESES))
             pc = 0;
-
 
         if (top.getSimbol().equals(Symbols.SE))
             pt = 8;
